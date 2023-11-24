@@ -1,0 +1,30 @@
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+name: release-artifact
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: leafo/gh-actions-lua@v10
+        with:
+          lua-version: 5.3
+
+      - name: Build
+        run: |
+          mkdir -p dist
+          lua ./bundleSelf.lua
+
+      - name: Upload Release Artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ steps.release.outputs.tag_name }} ./dist/neblua.lua
+          gh release upload ${{ steps.release.outputs.tag_name }} ./dist/neblua-cli.lua
