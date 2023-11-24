@@ -9,7 +9,7 @@ NebLua is a tiny zero-dependency bundler for Lua. Lua 5.3 supported but it may w
 
 ## Installation
 
-Download single source file from [Releases]()
+Download single source file from [Releases](https://github.com/Tsukina-7mochi/neblua/releases)
 
 ## Usage
 
