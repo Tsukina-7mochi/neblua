@@ -1,9 +1,13 @@
-local appInfo = require("app")
 local getFileContent = require("src.getFileContent")
 local moduleLoader = require("src.moduleLoader")
 local path = require("src.path")
 local requireText = require("src.requireModule").requireText
 local split = require("src.string").split
+
+local appInfo = {
+    name = "neblua",
+    version = requireText("./version.txt"):gsub("\n", ""),
+}
 
 local template = requireText("./src/templates/template.lua")
 local substitutionPoints = {
