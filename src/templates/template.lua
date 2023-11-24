@@ -85,11 +85,11 @@ end
 ---@return string
 ---@overload fun(moduleName: string): nil
 local function bundlerSearcher(moduleName)
-    moduleName = moduleName.gsub(moduleName, "%.", pathSeparator)
+    moduleName = moduleName:gsub("%.", pathSeparator)
 
     local templates = split(package.path, templateSeparator)
     for _, template in ipairs(templates) do
-        local path = template.gsub(template, substitutionPoint, moduleName)
+        local path = template:gsub(substitutionPoint, moduleName)
         local resolvedPath = resolvePath(path)
         local loader = package.bundleLoader[resolvedPath]
         if loader ~= nil and loader.loader ~= nil then
