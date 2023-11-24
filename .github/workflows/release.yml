@@ -16,6 +16,8 @@ jobs:
       - uses: google-github-actions/release-please-action@v3
         with:
           release-type: simple
+          bump-minor-pre-major: true
+          bump-patch-for-minor-pre-major: true
 
       - uses: leafo/gh-actions-lua@v10
         with:
