@@ -153,7 +153,7 @@ local errorHandler = function(err)
     return message
 end
 
-local result = table.pack(xpcall(require, errorHandler, __NEBLUA_ENTRY__))
+local result = table.pack(xpcall(require, errorHandler, __NEBLUA_ENTRY__, ...))
 local success = result[1]
 -- print error to stdout and re-throw
 if not success then
