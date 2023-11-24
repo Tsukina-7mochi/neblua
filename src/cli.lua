@@ -65,6 +65,7 @@ Options:
     -e, --entry <file>      Entry module name
     -o, --output <file>     Output file name
     -v, --version           Print version
+    --root-dir <dir>        Root directory
     --verbose               Enable verbose output
     --help                  Print this help message
             ]])
@@ -80,12 +81,16 @@ Options:
         options.entry = val
 
         if options.output == nil then
-            options.output = options.entry:sub(1, options.entry:find("%.[^%.]*$") - 1) .. ".bundle.lua"
+            options.output = options.entry .. ".bundle.lua"
         end
     elseif command == "-o" or command == "--output" then
         command = nil
 
         options.output = val
+    elseif command == "--root-dir" then
+        command = nil
+
+        options.rootDir = val
     else
         error("Unknown command " .. command)
     end
