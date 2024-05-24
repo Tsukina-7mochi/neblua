@@ -21,15 +21,16 @@ This is a part of configuration of NebLua's self-build. See `/example`, `./bundl
 local bundle = require("src.neblua").bundle
 
 bundle {
-    entry = "src.neblua",
-    output = "./dist/neblua.lua",
+    entry = "src.main",
+    output = "./dist/main.bundle.lua",
     files = {
-        "./src/neblua.lua",
-        "./src/path.lua",
-        "./src/string.lua",
-        { path = "./src/templates/template.lua", type = "text" }
-    },
-    verbose = true,
+        "./src/main.lua",
+        -- manually add files (for sub-effects)
+        "./src/foo.lua",
+        -- specifying types
+        { path: "./src/bar.lua", type: "lua" },
+        { path: "./src/some.txt", type: "text" },
+    }
 }
 ```
 
