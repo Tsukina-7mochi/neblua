@@ -1,4 +1,4 @@
-local neblua = require("src.neblua")
+local neblua = require("src.neblua") --[[ @bundle ]]
 
 ---Splits a string by a search string
 ---@param str string

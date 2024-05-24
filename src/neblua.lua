@@ -3,6 +3,7 @@ local moduleLoader = require("src.moduleLoader")
 local path = require("src.path")
 local requireText = require("src.requireModule").requireText
 local split = require("src.string").split
+local array = require("src.array")
 
 local appInfo = {
     name = "neblua",
@@ -14,6 +15,82 @@ local substitutionPoints = {
     entry = "__NEBLUA_ENTRY__",
     slot = "%-%-%[%[__NEBLUA_SLOT__%]%]",
 }
+
+-- TODO: support long string literals
+local requirePatterns = {
+    "require%s*\"([^\"]*)\"",
+    "require%s*'([^\"]*)'",
+    "require%s*%(%s*\"([^\"]*)\"%s*%)",
+    "require%s*%(%s*'([^\"]*)'%s*%)",
+}
+local requireTextPatterns = {
+    "requireText%s*\"([^\"]*)\"",
+    "requireText%s*'([^\"]*)'",
+    "requireText%s*%(%s*\"([^\"]*)\"%s*%)",
+    "requireText%s*%(%s*'([^\"]*)'%s*%)",
+}
+
+local config = split(package.config, "\n")
+local pathSeparator = config[1]
+local templateSeparator = config[2]
+local substitutionPoint = config[3]
+local pathTemplates = split(package.path, templateSeparator)
+pathTemplates = array.filter(pathTemplates, function(v)
+    return v:sub(1, 1) == "."
+end)
+
+---@param filename string
+---@param moduleType "lua" | "text"
+---@param rootDir string
+---@return { path: string, slotContent: string }[]
+local function loadFileAsSlot(filename, moduleType, rootDir)
+    ---@type { path: string, slotContent: string }[]
+    local results = {}
+    local escapedFileName = filename:gsub("%%", "%%%%")
+
+    local success, content = pcall(getFileContent, path.relative(filename, rootDir))
+    if not success then return {} end
+
+    if moduleType == "lua" then
+        local loaded = moduleLoader.luaModule(escapedFileName, content)
+        table.insert(results, { path = filename, slotContent = loaded })
+    elseif moduleType == "text" then
+        local loaded = moduleLoader.textModule(escapedFileName, content)
+        table.insert(results, { path = filename, slotContent = loaded })
+    end
+
+    if moduleType == "text" then
+        return results
+    end
+
+    -- search `require`s recursively
+    for _, pattern in ipairs(requirePatterns) do
+        for moduleName in content:gmatch(pattern) do
+            moduleName = moduleName:gsub("%.", pathSeparator)
+
+            for _, template in ipairs(pathTemplates) do
+                local modulePath = template:gsub(substitutionPoint, moduleName)
+                local filename = path.relative(modulePath, ".")
+                local loaded = loadFileAsSlot(filename, "lua", rootDir)
+                for _, l in ipairs(loaded) do
+                    table.insert(results, l)
+                end
+            end
+        end
+    end
+
+    -- search `requireText`s
+    for _, pattern in ipairs(requireTextPatterns) do
+        for filename in content:gmatch(pattern) do
+            local loaded = loadFileAsSlot(filename, "text", rootDir)
+            for _, l in ipairs(loaded) do
+                table.insert(results, l)
+            end
+        end
+    end
+
+    return results
+end
 
 ---@class BundleOptions
 ---@field rootDir? string
@@ -117,24 +194,17 @@ local function bundle(options)
     verbosePrint("Entry : " .. options.entry)
     verbosePrint("Output: " .. options.output)
 
-    ---@type table<string, { type: string, content: string }>
-    local files = {}
-    for _, file in ipairs(options.files) do
-        files[file.path] = {
-            type = file.type,
-            content = getFileContent(path.relative(file.path, options.rootDir)),
-        }
-        verbosePrint("Loaded " .. file.path)
-    end
-
+    ---@type string[]
+    local loadedFiles = {}
     local slotContents = {}
-    for fileName, file in pairs(files) do
-        fileName = fileName:gsub("%%", "%%%%")
-
-        if file.type == "lua" then
-            table.insert(slotContents, moduleLoader.luaModule(fileName, file.content))
-        elseif file.type == "text" then
-            table.insert(slotContents, moduleLoader.textModule(fileName, file.content))
+    for _, file in ipairs(options.files) do
+        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir)
+        for _, l in ipairs(loaded) do
+            if not array.includes(loadedFiles, l.path) then
+                verbosePrint("Loaded " .. l.path)
+                table.insert(loadedFiles, l.path)
+                table.insert(slotContents, l.slotContent)
+            end
         end
     end
 
