@@ -13,7 +13,7 @@ Download single source file from [Releases](https://github.com/Tsukina-7mochi/ne
 
 ## Usage
 
-### Program (recommended)
+### Program
 
 This is a part of configuration of NebLua's self-build. See `/example`, `./bundleSelf.lua` and `/test/bundle/bundle.test.lua`
 
@@ -25,24 +25,16 @@ bundle {
     output = "./dist/main.bundle.lua",
     files = {
         "./src/main.lua",
+
         -- manually add files (for sub-effects)
         "./src/foo.lua",
+
         -- specifying types
         { path: "./src/bar.lua", type: "lua" },
         { path: "./src/some.txt", type: "text" },
     }
 }
 ```
-
-#### Bundle Options
-
-|    key    |             value              |
-| --------- | ------------------------------ |
-| `rootDir` | root directory of source files |
-| `entry`   | entry module name              |
-| `output`  | output file name               |
-| `files`   | source files                   |
-| `verbose` | enable verbose mode            |
 
 ### CLI
 
@@ -57,6 +49,55 @@ $ lua neblua-cli [options] [files]
 | `--verbose` | none | enable verbose mode |
 | `-v`, `--version` | none | print version |
 
+## API
+
+### neblua.bundle
+
+```
+neblua.bundle(options: BuildOptions)
+```
+
+Bundles input files into one file.
+
+#### BuildOptions
+
+|    key    |       type       |             value              |
+| --------- | ---------------- |  ----------------------------- |
+| `rootDir` | `string \| nil`  | root directory of source files |
+| `entry`   | `string`         | entry module name              |
+| `files`   | `File[]`         | source files (where `File` is `string \| { path: string, type: string }`)                  |
+| `output`  | `string`         | output file name               |
+| `verbose` | `boolean \| nil` | enable verbose output          |
+
+### neblua.requireText
+
+```
+neblua.requireText(path: string): string
+```
+
+Requires module as text file. Returns text content of the given file.
+
+#### Example
+
+```lua
+local requireText = require("neblua").requireText
+
+-- Text content is bundled
+local version = requireText("./version.txt")
+print(version)
+```
+
+### neblua.appInfo
+
+```
+neblua.appInfo
+```
+
+|    key    |   type   |         value         |
+| --------- | -------- | --------------------- |
+| `name`    | `string` | the value `"neblua"`  |
+| `version` | `string` | the version of neblua |
+
 ## Plans
 
 - [x] support `require`
@@ -64,6 +105,6 @@ $ lua neblua-cli [options] [files]
 - [x] support `dofile`
 - [x] error output override
 - [x] string require
-- [ ] automatically add required files
+- [x] (partially) automatically add required files
 - [ ] minify
 - [ ] tree shaking
