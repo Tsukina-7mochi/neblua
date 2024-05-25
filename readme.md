@@ -42,12 +42,13 @@ bundle {
 $ lua neblua-cli [options] [files]
 ```
 
-| options | value | function |
-|---|---|---|
-| `-e`, `--entry` | module name | set entry point |
-| `-o`, `--output` | file name | set output file name |
-| `--verbose` | none | enable verbose mode |
-| `-v`, `--version` | none | print version |
+|       options       |    value    |             function            |
+| ------------------- | ----------- | ------------------------------- |
+| `-e`, `--entry`     | module name | set entry point                 |
+| `-o`, `--output`    | file name   | set output file name            |
+| `--verbose`         | none        | enable verbose mode             |
+| `-v`, `--version`   | none        | print version                   |
+| `--no-auto-require` | none        | disable automatic module import |
 
 ## API
 
@@ -61,13 +62,14 @@ Bundles input files into one file.
 
 #### BuildOptions
 
-|    key    |       type       |             value              |
-| --------- | ---------------- |  ----------------------------- |
-| `rootDir` | `string \| nil`  | root directory of source files |
-| `entry`   | `string`         | entry module name              |
-| `files`   | `File[]`         | source files (where `File` is `string \| { path: string, type: string }`)                  |
-| `output`  | `string`         | output file name               |
-| `verbose` | `boolean \| nil` | enable verbose output          |
+|     key       |       type       |             value                        |
+| ------------- | ---------------- |  --------------------------------------- |
+| `rootDir`     | `string \| nil`  | root directory of source files           |
+| `entry`       | `string`         | entry module name                        |
+| `files`       | `File[]`         | source files (where `File` is `string \| { path: string, type: string }`) |
+| `output`      | `string`         | output file name                         |
+| `verbose`     | `boolean \| nil` | enable verbose output                    |
+| `autoRequire` | `boolean \| nil` | enable automatic module import (default) |
 
 ### neblua.requireText
 
