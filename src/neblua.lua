@@ -42,8 +42,9 @@ end)
 ---@param filename string
 ---@param moduleType "lua" | "text"
 ---@param rootDir string
+---@param recurse boolean
 ---@return { path: string, slotContent: string }[]
-local function loadFileAsSlot(filename, moduleType, rootDir)
+local function loadFileAsSlot(filename, moduleType, rootDir, recurse)
     ---@type { path: string, slotContent: string }[]
     local results = {}
     local escapedFileName = filename:gsub("%%", "%%%%")
@@ -59,7 +60,7 @@ local function loadFileAsSlot(filename, moduleType, rootDir)
         table.insert(results, { path = filename, slotContent = loaded })
     end
 
-    if moduleType == "text" then
+    if moduleType == "text" or recurse == false then
         return results
     end
 
@@ -98,6 +99,7 @@ end
 ---@field files (string | { path: string, type: string })[]
 ---@field output string
 ---@field verbose? boolean
+---@field autoRequire? boolean
 
 ---@class NormalizedBundleOptions
 ---@field rootDir string
@@ -105,6 +107,7 @@ end
 ---@field files { path: string, type: "lua" | "text" }[]
 ---@field output string
 ---@field verbose boolean
+---@field autoRequire boolean
 
 ---@param options BundleOptions
 ---@return NormalizedBundleOptions
@@ -118,6 +121,7 @@ local function normalizeBundleOptions(options)
     local files = options.files
     local output = options.output
     local verbose = options.verbose
+    local autoRequire = options.autoRequire
 
     if rootDir == nil then
         rootDir = "./"
@@ -165,11 +169,17 @@ local function normalizeBundleOptions(options)
     if type(output) ~= "string" then
         error("[neblua] Expected options.output to be a string")
     end
-    options.output = path.relative(options.output, ".")
+    output = path.relative(output, ".")
 
     if verbose ~= nil and type(verbose) ~= "boolean" then
         error("[neblua] Expected options.verbose to be a string or nil")
     end
+    verbose = verbose == true
+
+    if autoRequire ~= nil and type(autoRequire) ~= "boolean" then
+        error("[neblua] Expected options.autoRequire to be a string or nil")
+    end
+    autoRequire = autoRequire ~= false
 
     return {
         rootDir = rootDir,
@@ -177,6 +187,7 @@ local function normalizeBundleOptions(options)
         files = files,
         output = output,
         verbose = verbose,
+        autoRequire = autoRequire,
     }
 end
 
@@ -198,7 +209,7 @@ local function bundle(options)
     local loadedFiles = {}
     local slotContents = {}
     for _, file in ipairs(options.files) do
-        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir)
+        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir, options.autoRequire)
         for _, l in ipairs(loaded) do
             if not array.includes(loadedFiles, l.path) then
                 verbosePrint("Loaded " .. l.path)

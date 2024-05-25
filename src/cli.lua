@@ -1,49 +1,11 @@
-local neblua = require("src.neblua") --[[ @bundle ]]
+local neblua = require("src.neblua")
 
----Splits a string by a search string
----@param str string
----@param searchStr string
----@return string[]
-local function split(str, searchStr)
-    if str == "" then
-        return { str }
-    end
-
-    local result = {}
-    local pos = 1
-    while true do
-        local startPos, endPos = str:find(searchStr, pos)
-
-        if startPos == nil then
-            break
-        end
-
-        table.insert(result, str:sub(pos, startPos - 1))
-        pos = endPos + 1
-    end
-
-    if pos <= #str then
-        table.insert(result, str:sub(pos))
-    end
-
-    return result
-end
-
-local config = split(package.config, "\n")
-local pathSeparator = config[1]
-local templateSeparator = config[2]
-local substitutionPoint = config[3]
-
-local srcName = "./" .. debug.getinfo(1).short_src
-local bundleFileName = srcName:gsub(
-    "%" .. pathSeparator .. "[^/]*$",
-    ("/src/bundle.lua"):gsub("%/", pathSeparator)
-)
 local options = {
     entry = nil,
     files = {},
     output = nil,
     verbose = false,
+    autoRequire = true,
 }
 
 local command = nil
@@ -55,6 +17,8 @@ for _, val in ipairs(arg) do
 
         if val == "--verbose" then
             options.verbose = true
+        elseif val == "--no-auto-require" then
+            options.autoRequire = false
         elseif val == "-v" or val == "--version" then
             print(neblua.appInfo.name .. " " .. neblua.appInfo.version)
             os.exit(0)
@@ -97,10 +61,10 @@ Options:
 end
 
 if options.entry == nil then
-    error("No entry file specified")
+    error("No entry module specified")
 end
 if options.output == nil then
     error("No output file specified")
 end
 
-return require("src.neblua").bundle(options)
+return neblua.bundle(options)
