@@ -2,10 +2,10 @@ local neblua = require("src.neblua")
 
 local options = {
     entry = nil,
-    files = {},
+    include = {},
     output = nil,
     verbose = false,
-    excludes = {},
+    exclude = {},
 }
 
 local command = nil
@@ -36,7 +36,7 @@ Options:
             command = val
         end
     elseif command == nil then
-        table.insert(options.files, val)
+        table.insert(options.include, val)
     elseif command == "-e" or command == "--entry" then
         command = nil
 
@@ -53,10 +53,10 @@ Options:
         command = nil
 
         options.rootDir = val
-    elseif command == "--excludes" then
+    elseif command == "--exclude" then
         command = nil
 
-        table.insert(options.excludes, val)
+        table.insert(options.exclude, val)
     else
         error("Unknown command " .. command)
     end

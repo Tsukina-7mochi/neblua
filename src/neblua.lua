@@ -111,18 +111,18 @@ end
 ---@class BundleOptions
 ---@field rootDir? string
 ---@field entry string
----@field files (string | { path: string, type: string })[]
+---@field include (string | { path: string, type: string })[]
 ---@field output string
 ---@field verbose? boolean
----@field excludes? string[]
+---@field exclude? string[]
 
 ---@class NormalizedBundleOptions
 ---@field rootDir string
 ---@field entry string
----@field files { path: string, type: "lua" | "text" }[]
+---@field include { path: string, type: "lua" | "text" }[]
 ---@field output string
 ---@field verbose boolean
----@field excludes string[]
+---@field exclude string[]
 
 ---@param options BundleOptions
 ---@return NormalizedBundleOptions
@@ -133,10 +133,10 @@ local function normalizeBundleOptions(options)
 
     local rootDir = options.rootDir
     local entry = options.entry
-    local files = options.files
+    local include = options.include
     local output = options.output
     local verbose = options.verbose
-    local excludes = options.excludes
+    local exclude = options.exclude
 
     if rootDir == nil then
         rootDir = "./"
@@ -156,28 +156,28 @@ local function normalizeBundleOptions(options)
         error("[neblua] Expected options.entry to be a string")
     end
 
-    if type(files) ~= "table" then
-        error("[neblua] Expected options.files to be a table")
+    if type(include) ~= "table" then
+        error("[neblua] Expected options.include to be a table")
     end
-    for i, file in ipairs(files) do
+    for i, file in ipairs(include) do
         if type(file) == "string" then
-            files[i] = { path = file, type = "lua" }
+            include[i] = { path = file, type = "lua" }
         elseif type(file) == "table" then
             if type(file.path) ~= "string" then
-                error("[neblua] Expected options.files[" .. i .. "].path to be a string")
+                error("[neblua] Expected options.include[" .. i .. "].path to be a string")
             elseif type(file.type) ~= "string" then
-                error("[neblua] Expected options.files[" .. i .. "].type to be one of {\"lua\", \"text\"}")
+                error("[neblua] Expected options.include[" .. i .. "].type to be one of {\"lua\", \"text\"}")
             end
         else
-            error("[neblua] Expected options.files[" .. i .. "] to be a string or a table")
+            error("[neblua] Expected options.include[" .. i .. "] to be a string or a table")
         end
 
-        files[i].path = path.relative(files[i].path, ".")
-        if files[i].type == "lua" then
-        elseif files[i].type == "text" then
+        include[i].path = path.relative(include[i].path, ".")
+        if include[i].type == "lua" then
+        elseif include[i].type == "text" then
             --do nothing
         else
-            error("[neblua] Expected options.files[" .. i .. "].type to be one of {\"lua\", \"text\"}")
+            error("[neblua] Expected options.include[" .. i .. "].type to be one of {\"lua\", \"text\"}")
         end
     end
 
@@ -191,25 +191,25 @@ local function normalizeBundleOptions(options)
     end
     verbose = verbose == true
 
-    if excludes == nil then
-        excludes = {}
-    elseif type(excludes) == "table" then
-        for i, pattern in ipairs(excludes) do
+    if exclude == nil then
+        exclude = {}
+    elseif type(exclude) == "table" then
+        for i, pattern in ipairs(exclude) do
             if type(pattern) ~= "string" then
-                error("[neblua] Expected options.files[" .. i .. "].path to be a string")
+                error("[neblua] Expected options.include[" .. i .. "].path to be a string")
             end
         end
     else
-        error("[neblua] Expected options.excludes to be a string[]")
+        error("[neblua] Expected options.exclude to be a string[]")
     end
 
     return {
         rootDir = rootDir,
         entry = entry,
-        files = files,
+        include = include,
         output = output,
         verbose = verbose,
-        excludes = excludes,
+        exclude = exclude,
     }
 end
 
@@ -230,8 +230,8 @@ local function bundle(options)
     ---@type string[]
     local loadedFiles = {}
     local slotContents = {}
-    for _, file in ipairs(options.files) do
-        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir, options.excludes)
+    for _, file in ipairs(options.include) do
+        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir, options.exclude)
         for _, l in ipairs(loaded) do
             if not array.includes(loadedFiles, l.path) then
                 verbosePrint("Loaded " .. l.path)
