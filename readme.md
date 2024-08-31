@@ -1,11 +1,11 @@
 # NebLua
 
-NebLua is a tiny zero-dependency bundler for Lua. Lua 5.3 supported but it may work for Lua 5.4.
+NebLua is a tiny zero-dependency bundler for Lua. Lua 5.4 supported but it may work for Lua 5.3.
 
 ## Features
 
 - Bundle `require`, `loadfile` and `dofile` functions
-- Text import by `requireText`
+- Text import with `requireText`
 
 ## Installation
 
@@ -13,9 +13,9 @@ Download single source file from [Releases](https://github.com/Tsukina-7mochi/ne
 
 ## Usage
 
-### Program
+### Lua
 
-This is a part of configuration of NebLua's self-build. See `/example`, `./bundleSelf.lua` and `/test/bundle/bundle.test.lua`
+This is a part of configuration of NebLua's self-build. See `/example` and `/test/bundle/bundle.test.lua`
 
 ```lua
 local bundle = require("src.neblua").bundle
@@ -23,16 +23,19 @@ local bundle = require("src.neblua").bundle
 bundle {
     entry = "src.main",
     output = "./dist/main.bundle.lua",
-    files = {
+    include = {
         "./src/main.lua",
 
         -- manually add files (for sub-effects)
         "./src/foo.lua",
+    exclude = {},    --Optional
+    rootDir = nil,   --Optional
 
         -- specifying types
         { path: "./src/bar.lua", type: "lua" },
         { path: "./src/some.txt", type: "text" },
-    }
+    },
+    verbose = true,  --Optional
 }
 ```
 
@@ -48,7 +51,7 @@ $ lua neblua-cli [options] [files]
 | `-o`, `--output`  | file name   | set output file name               |
 | `--verbose`       | none        | enable verbose mode                |
 | `-v`, `--version` | none        | print version                      |
-| `--excludes`      | none        | excluded file patterns from bundle |
+| `--exclude`       | none        | excluded file patterns from bundle |
 
 ## API
 
@@ -62,14 +65,14 @@ Bundles input files into one file.
 
 #### BuildOptions
 
-|     key       |       type       |             value                        |
-| ------------- | ---------------- |  --------------------------------------- |
-| `rootDir`     | `string \| nil`  | root directory of source files           |
-| `entry`       | `string`         | entry module name                        |
-| `files`       | `File[]`         | source files (where `File` is `string \| { path: string, type: string }`) |
-| `output`      | `string`         | output file name                         |
-| `verbose`     | `boolean \| nil` | enable verbose output                    |
-| `autoRequire` | `boolean \| nil` | enable automatic module import (default) |
+|     key       |       type        |             value                        |
+| ------------- | ----------------- |  --------------------------------------- |
+| `rootDir`     | `string \| nil`   | root directory of source files           |
+| `entry`       | `string`          | entry module name                        |
+| `include`     | `File[]`          | source files (where `File` is `string \| { path: string, type: string }`) |
+| `output`      | `string`          | output file name                         |
+| `verbose`     | `boolean \| nil`  | enable verbose output                    |
+| `exclude`     | `string[] \| nil` | excludes files from bundle with patterns |
 
 ### neblua.requireText
 
