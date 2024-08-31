@@ -5,7 +5,7 @@ local options = {
     files = {},
     output = nil,
     verbose = false,
-    autoRequire = true,
+    excludes = {},
 }
 
 local command = nil
@@ -17,8 +17,6 @@ for _, val in ipairs(arg) do
 
         if val == "--verbose" then
             options.verbose = true
-        elseif val == "--no-auto-require" then
-            options.autoRequire = false
         elseif val == "-v" or val == "--version" then
             print(neblua.appInfo.name .. " " .. neblua.appInfo.version)
             os.exit(0)
@@ -55,6 +53,10 @@ Options:
         command = nil
 
         options.rootDir = val
+    elseif command == "--excludes" then
+        command = nil
+
+        table.insert(options.excludes, val)
     else
         error("Unknown command " .. command)
     end

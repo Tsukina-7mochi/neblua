@@ -39,12 +39,24 @@ pathTemplates = array.filter(pathTemplates, function(v)
     return v:sub(1, 1) == "."
 end)
 
+---@param str string
+---@param patterns string[]
+---@return boolean
+local function anyPatternMatch(str, patterns)
+    for _, pattern in ipairs(patterns) do
+        if str:match(pattern) then
+            return true
+        end
+    end
+    return false
+end
+
 ---@param filename string
 ---@param moduleType "lua" | "text"
 ---@param rootDir string
----@param recurse boolean
+---@param excludePatterns string[]
 ---@return { path: string, slotContent: string }[]
-local function loadFileAsSlot(filename, moduleType, rootDir, recurse)
+local function loadFileAsSlot(filename, moduleType, rootDir, excludePatterns)
     ---@type { path: string, slotContent: string }[]
     local results = {}
     local escapedFileName = filename:gsub("%%", "%%%%")
@@ -60,7 +72,7 @@ local function loadFileAsSlot(filename, moduleType, rootDir, recurse)
         table.insert(results, { path = filename, slotContent = loaded })
     end
 
-    if moduleType == "text" or recurse == false then
+    if moduleType == "text" then
         return results
     end
 
@@ -68,13 +80,14 @@ local function loadFileAsSlot(filename, moduleType, rootDir, recurse)
     for _, pattern in ipairs(requirePatterns) do
         for moduleName in content:gmatch(pattern) do
             moduleName = moduleName:gsub("%.", pathSeparator)
-
-            for _, template in ipairs(pathTemplates) do
-                local modulePath = template:gsub(substitutionPoint, moduleName)
-                local filename = path.relative(modulePath, ".")
-                local loaded = loadFileAsSlot(filename, "lua", rootDir)
-                for _, l in ipairs(loaded) do
-                    table.insert(results, l)
+            if not anyPatternMatch(moduleName, excludePatterns) then
+                for _, template in ipairs(pathTemplates) do
+                    local modulePath = template:gsub(substitutionPoint, moduleName)
+                    local filename = path.relative(modulePath, ".")
+                    local loaded = loadFileAsSlot(filename, "lua", rootDir, excludePatterns, recurse)
+                    for _, l in ipairs(loaded) do
+                        table.insert(results, l)
+                    end
                 end
             end
         end
@@ -83,9 +96,11 @@ local function loadFileAsSlot(filename, moduleType, rootDir, recurse)
     -- search `requireText`s
     for _, pattern in ipairs(requireTextPatterns) do
         for filename in content:gmatch(pattern) do
-            local loaded = loadFileAsSlot(filename, "text", rootDir)
-            for _, l in ipairs(loaded) do
-                table.insert(results, l)
+            if not anyPatternMatch(filename, excludePatterns) then
+                local loaded = loadFileAsSlot(filename, "text", rootDir, excludePatterns, recurse)
+                for _, l in ipairs(loaded) do
+                    table.insert(results, l)
+                end
             end
         end
     end
@@ -99,7 +114,7 @@ end
 ---@field files (string | { path: string, type: string })[]
 ---@field output string
 ---@field verbose? boolean
----@field autoRequire? boolean
+---@field excludes? string[]
 
 ---@class NormalizedBundleOptions
 ---@field rootDir string
@@ -107,7 +122,7 @@ end
 ---@field files { path: string, type: "lua" | "text" }[]
 ---@field output string
 ---@field verbose boolean
----@field autoRequire boolean
+---@field excludes string[]
 
 ---@param options BundleOptions
 ---@return NormalizedBundleOptions
@@ -121,7 +136,7 @@ local function normalizeBundleOptions(options)
     local files = options.files
     local output = options.output
     local verbose = options.verbose
-    local autoRequire = options.autoRequire
+    local excludes = options.excludes
 
     if rootDir == nil then
         rootDir = "./"
@@ -176,10 +191,17 @@ local function normalizeBundleOptions(options)
     end
     verbose = verbose == true
 
-    if autoRequire ~= nil and type(autoRequire) ~= "boolean" then
-        error("[neblua] Expected options.autoRequire to be a string or nil")
+    if excludes == nil then
+        excludes = {}
+    elseif type(excludes) == "table" then
+        for i, pattern in ipairs(excludes) do
+            if type(pattern) ~= "string" then
+                error("[neblua] Expected options.files[" .. i .. "].path to be a string")
+            end
+        end
+    else
+        error("[neblua] Expected options.excludes to be a string[]")
     end
-    autoRequire = autoRequire ~= false
 
     return {
         rootDir = rootDir,
@@ -187,7 +209,7 @@ local function normalizeBundleOptions(options)
         files = files,
         output = output,
         verbose = verbose,
-        autoRequire = autoRequire,
+        excludes = excludes,
     }
 end
 
@@ -209,7 +231,7 @@ local function bundle(options)
     local loadedFiles = {}
     local slotContents = {}
     for _, file in ipairs(options.files) do
-        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir, options.autoRequire)
+        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir, options.excludes)
         for _, l in ipairs(loaded) do
             if not array.includes(loadedFiles, l.path) then
                 verbosePrint("Loaded " .. l.path)

@@ -42,13 +42,13 @@ bundle {
 $ lua neblua-cli [options] [files]
 ```
 
-|       options       |    value    |             function            |
-| ------------------- | ----------- | ------------------------------- |
-| `-e`, `--entry`     | module name | set entry point                 |
-| `-o`, `--output`    | file name   | set output file name            |
-| `--verbose`         | none        | enable verbose mode             |
-| `-v`, `--version`   | none        | print version                   |
-| `--no-auto-require` | none        | disable automatic module import |
+|       options     |    value    |             function               |
+| ----------------- | ----------- | ---------------------------------- |
+| `-e`, `--entry`   | module name | set entry point                    |
+| `-o`, `--output`  | file name   | set output file name               |
+| `--verbose`       | none        | enable verbose mode                |
+| `-v`, `--version` | none        | print version                      |
+| `--excludes`      | none        | excluded file patterns from bundle |
 
 ## API
 
