@@ -8,7 +8,7 @@ describe(debug.getinfo(1).short_src, function()
     test("single file: module form entry", function()
         local options = {
             entry = "test.bundle.singleFile.main",
-            files = { "./test/bundle/singleFile/main.lua" },
+            include = { "./test/bundle/singleFile/main.lua" },
             output = "./test/bundle/singleFile/main.bundle.lua",
         }
 
@@ -21,7 +21,7 @@ describe(debug.getinfo(1).short_src, function()
     test("single file: path form entry", function()
         local options = {
             entry = "./test/bundle/singleFile/main",
-            files = { "./test/bundle/singleFile/main.lua" },
+            include = { "./test/bundle/singleFile/main.lua" },
             output = "./test/bundle/singleFile/main.bundle.lua",
         }
 
@@ -35,7 +35,7 @@ describe(debug.getinfo(1).short_src, function()
         local options = {
             rootDir = "./test/bundle/singleFile/",
             entry = "main",
-            files = { "./main.lua" },
+            include = { "./main.lua" },
             output = "./test/bundle/singleFile/main.bundle.lua",
         }
         bundle(options)
@@ -48,7 +48,7 @@ describe(debug.getinfo(1).short_src, function()
         local options = {
             rootDir = "./test/bundle/multiFileModuleRequire/",
             entry = "main",
-            files = { "./main.lua", "./module1.lua", "./subpath/module2.lua" },
+            include = { "./main.lua" },
             output = "./test/bundle/multiFileModuleRequire/main.bundle.lua",
         }
         bundle(options)
@@ -61,7 +61,7 @@ describe(debug.getinfo(1).short_src, function()
         local options = {
             rootDir = "./test/bundle/multiFilePathRequire/",
             entry = "main",
-            files = { "./main.lua", "./module1.lua", "./subpath/module2.lua" },
+            include = { "./main.lua" },
             output = "./test/bundle/multiFilePathRequire/main.bundle.lua",
         }
         bundle(options)
@@ -74,7 +74,7 @@ describe(debug.getinfo(1).short_src, function()
         local options = {
             rootDir = "./test/bundle/error/",
             entry = "main",
-            files = { "./main.lua", "./module1.lua" },
+            include = { "./main.lua" },
             output = "./test/bundle/error/main.bundle.lua",
         }
         bundle(options)
@@ -89,7 +89,7 @@ describe(debug.getinfo(1).short_src, function()
         local options = {
             rootDir = "./test/bundle/loadfile/",
             entry = "main",
-            files = { "./main.lua", "./module1.lua" },
+            include = { "./main.lua", "./module1.lua" },
             output = "./test/bundle/loadfile/main.bundle.lua",
         }
         bundle(options)
@@ -102,7 +102,7 @@ describe(debug.getinfo(1).short_src, function()
         local options = {
             rootDir = "./test/bundle/dofile/",
             entry = "main",
-            files = { "./main.lua", "./module1.lua" },
+            include = { "./main.lua", "./module1.lua" },
             output = "./test/bundle/dofile/main.bundle.lua",
         }
         bundle(options)

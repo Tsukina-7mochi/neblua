@@ -1,49 +1,11 @@
 local neblua = require("src.neblua")
 
----Splits a string by a search string
----@param str string
----@param searchStr string
----@return string[]
-local function split(str, searchStr)
-    if str == "" then
-        return { str }
-    end
-
-    local result = {}
-    local pos = 1
-    while true do
-        local startPos, endPos = str:find(searchStr, pos)
-
-        if startPos == nil then
-            break
-        end
-
-        table.insert(result, str:sub(pos, startPos - 1))
-        pos = endPos + 1
-    end
-
-    if pos <= #str then
-        table.insert(result, str:sub(pos))
-    end
-
-    return result
-end
-
-local config = split(package.config, "\n")
-local pathSeparator = config[1]
-local templateSeparator = config[2]
-local substitutionPoint = config[3]
-
-local srcName = "./" .. debug.getinfo(1).short_src
-local bundleFileName = srcName:gsub(
-    "%" .. pathSeparator .. "[^/]*$",
-    ("/src/bundle.lua"):gsub("%/", pathSeparator)
-)
 local options = {
     entry = nil,
-    files = {},
+    include = {},
     output = nil,
     verbose = false,
+    exclude = {},
 }
 
 local command = nil
@@ -74,7 +36,7 @@ Options:
             command = val
         end
     elseif command == nil then
-        table.insert(options.files, val)
+        table.insert(options.include, val)
     elseif command == "-e" or command == "--entry" then
         command = nil
 
@@ -91,16 +53,20 @@ Options:
         command = nil
 
         options.rootDir = val
+    elseif command == "--exclude" then
+        command = nil
+
+        table.insert(options.exclude, val)
     else
         error("Unknown command " .. command)
     end
 end
 
 if options.entry == nil then
-    error("No entry file specified")
+    error("No entry module specified")
 end
 if options.output == nil then
     error("No output file specified")
 end
 
-return require("src.neblua").bundle(options)
+return neblua.bundle(options)
