@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/Tsukina-7mochi/neblua/compare/v0.3.0...v0.3.1) (2024-10-01)
+
+
+### Bug Fixes
+
+* fix make script ([f0433cc](https://github.com/Tsukina-7mochi/neblua/commit/f0433ccceb2394e4acfe850144bc10b5fd444c60))
+
 ## [0.2.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.1.3...v0.2.0) (2023-11-24)
 
 
