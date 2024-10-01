@@ -1,6 +1,10 @@
 on:
   release:
-    types: [created]
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        required: true
 
 permissions:
   contents: write
@@ -24,5 +28,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload ${{ steps.release.outputs.tag_name }} ./dist/neblua.lua
-          gh release upload ${{ steps.release.outputs.tag_name }} ./dist/neblua-cli.lua
+          gh release upload ${{ github.ref }} ./dist/neblua.lua
+          gh release upload ${{ github.ref }} ./dist/neblua-cli.lua
