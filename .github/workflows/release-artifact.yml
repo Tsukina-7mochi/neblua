@@ -12,15 +12,13 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: leafo/gh-actions-lua@v10
         with:
-          lua-version: 5.3
+          lua-version: 5.4
 
       - name: Build
-        run: |
-          mkdir -p dist
-          lua ./bundleSelf.lua
+        run: make build
 
       - name: Upload Release Artifact
         env:
