@@ -12,10 +12,12 @@ build: $(DIST)
 build-cli: $(DIST)
 	$(LUA) ./src/cli.lua -e src.cli -o ./dist/neblua-cli.lua ./src/cli.lua
 
+.PHONY: check
 check: build build-cli
 	$(LUA) ./dist/neblua-cli.lua -e src.cli -o ./dist/temp.lua ./src/cli.lua
 	diff ./dist/neblua-cli.lua ./dist/temp.lua
 
+.PHONY: test
 test:
 	$(LUA) ./test.lua
 
