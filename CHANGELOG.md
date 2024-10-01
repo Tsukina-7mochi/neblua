@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.3.0...v0.4.0) (2024-10-01)
+
+
+### Features
+
+* update header of generated file ([b8ac904](https://github.com/Tsukina-7mochi/neblua/commit/b8ac904d49ed2152c53dabb0d1b8ccc7128061ff))
+* update husky and commitlint ([27e0525](https://github.com/Tsukina-7mochi/neblua/commit/27e0525e207e14effac1e9b267fd127355eaa1e9))
+
+
+### Bug Fixes
+
+* fix make script ([f0433cc](https://github.com/Tsukina-7mochi/neblua/commit/f0433ccceb2394e4acfe850144bc10b5fd444c60))
+
 ## [0.2.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.1.3...v0.2.0) (2023-11-24)
 
 
