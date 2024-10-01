@@ -1,8 +1,8 @@
 local bundle = require("src.neblua").bundle
 local util = require("test.util")
-local test = require("test.test").test
-local describe = require("test.test").describe
-local expect = require("test.test").expect
+local test = require("lib.test").test
+local describe = require("lib.test").describe
+local expect = require("lib.test").expect
 
 describe(debug.getinfo(1).short_src, function()
     test("single file: module form entry", function()
@@ -80,9 +80,9 @@ describe(debug.getinfo(1).short_src, function()
         bundle(options)
 
         local result = util.execute(options.output, true)
-        expect(result):to(function(value)
-            return value:find("in function 'error'") ~= nil and value:find("module1.lua:3:") ~= nil
-        end)
+
+        assert(result:find("in function 'error'") ~= nil, "error message not found")
+        assert(result:find("module1.lua:3:") ~= nil, "error line not found")
     end)
 
     test("loadfile", function()

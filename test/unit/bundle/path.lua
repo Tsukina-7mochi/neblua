@@ -1,7 +1,7 @@
 local path = require("src.path")
-local test = require("test.test").test
-local describe = require("test.test").describe
-local expect = require("test.test").expect
+local test = require("lib.test").test
+local describe = require("lib.test").describe
+local expect = require("lib.test").expect
 
 describe(debug.getinfo(1).short_src, function()
     describe("baseName", function()
