@@ -94,6 +94,7 @@ describe(debug.getinfo(1).short_src, function()
         outFile:close()
 
         outFile = assert(io.open(options.output, "w"))
+        outFile:write([[package.path = package.path:gsub(package.config:sub(1, 1), "\\")]])
         outFile:write([[package.config = "\\" .. package.config:sub(2)]])
         outFile:write(content)
         outFile:close()
@@ -112,8 +113,10 @@ describe(debug.getinfo(1).short_src, function()
             output = "./test/bundle/pathSeparator/main.bundle.lua",
         }
 
+        _ENV.package.path = _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "\\")
         _ENV.package.config = "\\" .. _ENV.package.config:sub(2)
         bundle(options)
+        _ENV.package.path = _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "/")
         _ENV.package.config = "/" .. _ENV.package.config:sub(2)
 
         local stdout, stderr = util.execute(options.output)
