@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.0...v0.5.1) (2025-02-17)
+
+
+### Bug Fixes
+
+* use `/` as path separator internally regardless of the value in `package.config` ([72c4fb3](https://github.com/Tsukina-7mochi/neblua/commit/72c4fb342bb86de143c401e86aac99d92d2d6f7b))
+
 ## [0.5.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.4.0...v0.5.0) (2025-02-17)
 
 
