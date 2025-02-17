@@ -6,6 +6,7 @@ local options = {
     output = nil,
     verbose = false,
     exclude = {},
+    fallbackStderr = false,
 }
 
 local command = nil
@@ -17,6 +18,8 @@ for _, val in ipairs(arg) do
 
         if val == "--verbose" then
             options.verbose = true
+        elseif val == "--fallback-stderr" then
+            options.fallbackStderr = true
         elseif val == "-v" or val == "--version" then
             print(neblua.appInfo.name .. " " .. neblua.appInfo.version)
             os.exit(0)
@@ -29,6 +32,7 @@ Options:
     -v, --version           Print version
     --root-dir <dir>        Root directory
     --verbose               Enable verbose output
+    --fallback-stderr       Use stdout as fallback for stderr
     --help                  Print this help message
             ]])
             os.exit(0)

@@ -13,6 +13,7 @@ local appInfo = {
 local template = requireText("./src/templates/template.lua")
 local substitutionPoints = {
     entry = "__NEBLUA_ENTRY__",
+    fallbackStderr = "__NEBLUA_FALLBACK_STDERR__",
     slot = "%-%-%[%[__NEBLUA_SLOT__%]%]",
 }
 
@@ -84,7 +85,7 @@ local function loadFileAsSlot(filename, moduleType, rootDir, excludePatterns)
                 for _, template in ipairs(pathTemplates) do
                     local modulePath = template:gsub(substitutionPoint, moduleName)
                     local filename = path.relative(modulePath, ".")
-                    local loaded = loadFileAsSlot(filename, "lua", rootDir, excludePatterns, recurse)
+                    local loaded = loadFileAsSlot(filename, "lua", rootDir, excludePatterns)
                     for _, l in ipairs(loaded) do
                         table.insert(results, l)
                     end
@@ -97,7 +98,7 @@ local function loadFileAsSlot(filename, moduleType, rootDir, excludePatterns)
     for _, pattern in ipairs(requireTextPatterns) do
         for filename in content:gmatch(pattern) do
             if not anyPatternMatch(filename, excludePatterns) then
-                local loaded = loadFileAsSlot(filename, "text", rootDir, excludePatterns, recurse)
+                local loaded = loadFileAsSlot(filename, "text", rootDir, excludePatterns)
                 for _, l in ipairs(loaded) do
                     table.insert(results, l)
                 end
@@ -115,6 +116,7 @@ end
 ---@field output string
 ---@field verbose? boolean
 ---@field exclude? string[]
+---@field fallbackStderr? boolean
 
 ---@class NormalizedBundleOptions
 ---@field rootDir string
@@ -123,6 +125,7 @@ end
 ---@field output string
 ---@field verbose boolean
 ---@field exclude string[]
+---@field fallbackStderr boolean
 
 ---@param options BundleOptions
 ---@return NormalizedBundleOptions
@@ -137,6 +140,7 @@ local function normalizeBundleOptions(options)
     local output = options.output
     local verbose = options.verbose
     local exclude = options.exclude
+    local fallbackStderr = options.fallbackStderr
 
     if rootDir == nil then
         rootDir = "./"
@@ -203,6 +207,11 @@ local function normalizeBundleOptions(options)
         error("[neblua] Expected options.exclude to be a string[]")
     end
 
+    if fallbackStderr ~= nil and type(fallbackStderr) ~= "boolean" then
+        error("[neblua] Expected options.fallbackStderr to be a boolean or nil")
+    end
+    fallbackStderr = fallbackStderr == true
+
     return {
         rootDir = rootDir,
         entry = entry,
@@ -210,6 +219,7 @@ local function normalizeBundleOptions(options)
         output = output,
         verbose = verbose,
         exclude = exclude,
+        fallbackStderr = fallbackStderr,
     }
 end
 
@@ -243,8 +253,14 @@ local function bundle(options)
 
     local entryName = "\"" .. options.entry:gsub("%%", "%%%%") .. "\""
     local slotContentsString = table.concat(slotContents, "\n"):gsub("%%", "%%%%")
+    local fallbackStderr = "false"
+    if options.fallbackStderr == true then
+        fallbackStderr = "true"
+    end
+
     local result = template
         :gsub(substitutionPoints.entry, entryName)
+        :gsub(substitutionPoints.fallbackStderr, fallbackStderr)
         :gsub(substitutionPoints.slot, slotContentsString)
 
     local outputFile = io.open(options.output, "w")
