@@ -21,10 +21,12 @@ end
 
 ---Execute given lua file
 ---@param filename string
----@param stdin string
+---@param stdin? string
 ---@return string stdout
 ---@return string stderr
 local function execute(filename, stdin)
+    if stdin == nil then stdin = "" end
+
     local stdoutFilename = os.tmpname()
     local stderrFilename = os.tmpname()
 

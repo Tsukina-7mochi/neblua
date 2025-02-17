@@ -14,7 +14,7 @@ describe(debug.getinfo(1).short_src, function()
 
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\n")
         expect(stderr):toBe("")
@@ -29,7 +29,7 @@ describe(debug.getinfo(1).short_src, function()
 
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\n")
         expect(stderr):toBe("")
@@ -44,7 +44,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\n")
         expect(stderr):toBe("")
@@ -59,7 +59,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\nmodule1\nmodule2\n")
         expect(stderr):toBe("")
@@ -74,7 +74,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\nmodule1\nmodule2\n")
         expect(stderr):toBe("")
@@ -89,7 +89,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local _, stderr = util.execute(options.output, "")
+        local _, stderr = util.execute(options.output)
 
         assert(stderr:find("Oops!") ~= nil, "error message not found")
         assert(stderr:find("module1.lua:3:") ~= nil, "error line not found")
@@ -105,7 +105,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         assert(stdout:find("Oops!") ~= nil, "error message not found in stdout")
         assert(stderr:find("Oops!") == nil, "error message found in stderr")
@@ -120,7 +120,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\nmodule1\n")
         expect(stderr):toBe("")
@@ -135,7 +135,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
         expect(stdout):toBe("main\nmodule1\n")
         expect(stderr):toBe("")
     end)
