@@ -45,13 +45,14 @@ bundle {
 $ lua neblua-cli [options] [files]
 ```
 
-|       options     |    value    |             function               |
-| ----------------- | ----------- | ---------------------------------- |
-| `-e`, `--entry`   | module name | set entry point                    |
-| `-o`, `--output`  | file name   | set output file name               |
-| `--verbose`       | none        | enable verbose mode                |
-| `-v`, `--version` | none        | print version                      |
-| `--exclude`       | none        | excluded file patterns from bundle |
+|       options       |    value    |                function                |
+| ------------------- | ----------- | -------------------------------------- |
+| `-e`, `--entry`     | module name | set entry point                        |
+| `-o`, `--output`    | file name   | set output file name                   |
+| `--verbose`         | none        | enable verbose mode                    |
+| `-v`, `--version`   | none        | print version                          |
+| `--exclude`         | none        | excluded file patterns from bundle     |
+| `--fallback-stderr` | none        | enable use of stdout instead of stderr |
 
 ## API
 
@@ -65,14 +66,15 @@ Bundles input files into one file.
 
 #### BuildOptions
 
-|     key       |       type        |             value                        |
-| ------------- | ----------------- |  --------------------------------------- |
-| `rootDir`     | `string \| nil`   | root directory of source files           |
-| `entry`       | `string`          | entry module name                        |
-| `include`     | `File[]`          | source files (where `File` is `string \| { path: string, type: string }`) |
-| `output`      | `string`          | output file name                         |
-| `verbose`     | `boolean \| nil`  | enable verbose output                    |
-| `exclude`     | `string[] \| nil` | excludes files from bundle with patterns |
+|       key        |       type        |             value                        |
+| ---------------- | ----------------- |  --------------------------------------- |
+| `rootDir`        | `string \| nil`   | root directory of source files           |
+| `entry`          | `string`          | entry module name                        |
+| `include`        | `File[]`          | source files (where `File` is `string \| { path: string, type: string }`) |
+| `output`         | `string`          | output file name                         |
+| `verbose`        | `boolean \| nil`  | enable verbose output                    |
+| `exclude`        | `string[] \| nil` | excludes files from bundle with patterns |
+| `fallbackStderr` | `string[] \| nil` | enable use of stdout instead of stderr   |
 
 ### neblua.requireText
 
