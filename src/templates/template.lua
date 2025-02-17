@@ -156,11 +156,17 @@ local errorHandler = function(err)
     return message
 end
 
+local fallbackStderr = __NEBLUA_FALLBACK_STDERR__
+
 local result = table.pack(xpcall(require, errorHandler, __NEBLUA_ENTRY__, ...))
 local success = result[1]
 -- print error to stdout and re-throw
 if not success then
-    io.stderr:write(result[2])
+    if fallbackStderr then
+        print(result[2])
+    else
+        io.stderr:write(result[2])
+    end
     error("Error occurred in bundled file.")
 end
 

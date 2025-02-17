@@ -21,25 +21,32 @@ end
 
 ---Execute given lua file
 ---@param filename string
----@param redirectStderr boolean?
+---@param stdin string
 ---@return string stdout
-local function execute(filename, redirectStderr)
-    local command = "lua " .. filename
-    if redirectStderr == true then
-        command = command .. " 2>&1"
-    end
+---@return string stderr
+local function execute(filename, stdin)
+    local stdoutFilename = os.tmpname()
+    local stderrFilename = os.tmpname()
 
-    local file = assert(io.popen(command, "r"))
+    local command = "lua " .. filename .. " 1>" .. stdoutFilename .. " 2>" .. stderrFilename
+
+    local file = assert(io.popen(command, "w"))
     if file == nil then
-        return ""
+        error("Failed to execute command: " .. command)
     end
 
-    local output = file:read("*a")
+    assert(file:write(stdin))
     file:close()
 
-    output = output:gsub("^%s*(.-)%s*$", "%1")
+    local stdoutFile = assert(io.open(stdoutFilename, "r"))
+    local stdout = stdoutFile:read("*a")
+    stdoutFile:close()
 
-    return output
+    local stderrFile = assert(io.open(stderrFilename, "r"))
+    local stderr = stderrFile:read("*a")
+    stderrFile:close()
+
+    return stdout, stderr
 end
 
 return {

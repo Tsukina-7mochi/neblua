@@ -14,8 +14,10 @@ describe(debug.getinfo(1).short_src, function()
 
         bundle(options)
 
-        local result = util.execute(options.output)
-        expect(result):toBe("main")
+        local stdout, stderr = util.execute(options.output, "")
+
+        expect(stdout):toBe("main\n")
+        expect(stderr):toBe("")
     end)
 
     test("single file: path form entry", function()
@@ -27,8 +29,10 @@ describe(debug.getinfo(1).short_src, function()
 
         bundle(options)
 
-        local result = util.execute(options.output)
-        expect(result):toBe("main")
+        local stdout, stderr = util.execute(options.output, "")
+
+        expect(stdout):toBe("main\n")
+        expect(stderr):toBe("")
     end)
 
     test("single file: rootDir", function()
@@ -40,8 +44,10 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local result = util.execute(options.output)
-        expect(result):toBe("main")
+        local stdout, stderr = util.execute(options.output, "")
+
+        expect(stdout):toBe("main\n")
+        expect(stderr):toBe("")
     end)
 
     test("multi file: module form", function()
@@ -53,8 +59,10 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local result = util.execute(options.output)
-        expect(result):toBe("main\nmodule1\nmodule2")
+        local stdout, stderr = util.execute(options.output, "")
+
+        expect(stdout):toBe("main\nmodule1\nmodule2\n")
+        expect(stderr):toBe("")
     end)
 
     test("multi file: path form", function()
@@ -66,8 +74,10 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local result = util.execute(options.output)
-        expect(result):toBe("main\nmodule1\nmodule2")
+        local stdout, stderr = util.execute(options.output, "")
+
+        expect(stdout):toBe("main\nmodule1\nmodule2\n")
+        expect(stderr):toBe("")
     end)
 
     test("error line", function()
@@ -79,10 +89,26 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local result = util.execute(options.output, true)
+        local _, stderr = util.execute(options.output, "")
 
-        assert(result:find("in function 'error'") ~= nil, "error message not found")
-        assert(result:find("module1.lua:3:") ~= nil, "error line not found")
+        assert(stderr:find("Oops!") ~= nil, "error message not found")
+        assert(stderr:find("module1.lua:3:") ~= nil, "error line not found")
+    end)
+
+    test("redirect stderr", function()
+        local options = {
+            rootDir = "./test/bundle/error/",
+            entry = "main",
+            include = { "./main.lua" },
+            output = "./test/bundle/error/main.bundle.lua",
+            fallbackStderr = true,
+        }
+        bundle(options)
+
+        local stdout, stderr = util.execute(options.output, "")
+
+        assert(stdout:find("Oops!") ~= nil, "error message not found in stdout")
+        assert(stderr:find("Oops!") == nil, "error message found in stderr")
     end)
 
     test("loadfile", function()
@@ -94,8 +120,10 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local result = util.execute(options.output, true)
-        expect(result):toBe("main\nmodule1")
+        local stdout, stderr = util.execute(options.output, "")
+
+        expect(stdout):toBe("main\nmodule1\n")
+        expect(stderr):toBe("")
     end)
 
     test("dofile", function()
@@ -107,7 +135,8 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local result = util.execute(options.output, true)
-        expect(result):toBe("main\nmodule1")
+        local stdout, stderr = util.execute(options.output, "")
+        expect(stdout):toBe("main\nmodule1\n")
+        expect(stderr):toBe("")
     end)
 end)
