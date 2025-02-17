@@ -44,15 +44,16 @@ local function split(str, searchStr)
 end
 
 local config = split(package.config, "\n")
-local pathSeparator = "/"
+local pathSeparator = config[1]
 local templateSeparator = config[2]
 local substitutionPoint = config[3]
+local internalPathSeparator = "/"
 
 --- Resolves a given path using the specified path separator
 ---@param path string The path to resolve
 ---@return string
 local function resolvePath(path)
-    local segments = split(path, pathSeparator)
+    local segments = split(path, internalPathSeparator)
     local resultSegments = {}
 
     if segments[1] == "." then
@@ -79,7 +80,7 @@ local function resolvePath(path)
         table.insert(resultSegments, "")
     end
 
-    return table.concat(resultSegments, pathSeparator)
+    return table.concat(resultSegments, internalPathSeparator)
 end
 
 --- Searches for a module in the `package.bundleLoader`
@@ -88,11 +89,11 @@ end
 ---@return string
 ---@overload fun(moduleName: string): nil
 local function bundlerSearcher(moduleName)
-    moduleName = moduleName:gsub("%.", pathSeparator)
+    moduleName = moduleName:gsub("%.", internalPathSeparator)
 
     local templates = split(package.path, templateSeparator)
     for _, template in ipairs(templates) do
-        local path = template:gsub(substitutionPoint, moduleName)
+        local path = template:gsub(pathSeparator, internalPathSeparator):gsub(substitutionPoint, moduleName)
         local resolvedPath = resolvePath(path)
         local loader = package.bundleLoader[resolvedPath]
         if loader ~= nil and loader.loader ~= nil then
