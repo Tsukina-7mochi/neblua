@@ -14,7 +14,7 @@ describe(debug.getinfo(1).short_src, function()
 
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\n")
         expect(stderr):toBe("")
@@ -29,7 +29,7 @@ describe(debug.getinfo(1).short_src, function()
 
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\n")
         expect(stderr):toBe("")
@@ -44,7 +44,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\n")
         expect(stderr):toBe("")
@@ -59,7 +59,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\nmodule1\nmodule2\n")
         expect(stderr):toBe("")
@@ -74,7 +74,49 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
+
+        expect(stdout):toBe("main\nmodule1\nmodule2\n")
+        expect(stderr):toBe("")
+    end)
+
+    test("multi file: backslash path separator at execution environment", function()
+        local options = {
+            rootDir = "./test/bundle/pathSeparator/",
+            entry = "main",
+            include = { "./main.lua" },
+            output = "./test/bundle/pathSeparator/main.bundle.lua",
+        }
+        bundle(options)
+
+        local outFile = assert(io.open(options.output, "r"))
+        local content = outFile:read("*a")
+        outFile:close()
+
+        outFile = assert(io.open(options.output, "w"))
+        outFile:write([[package.config = "\\" .. package.config:sub(2)]])
+        outFile:write(content)
+        outFile:close()
+
+        local stdout, stderr = util.execute(options.output)
+
+        expect(stdout):toBe("main\nmodule1\nmodule2\n")
+        expect(stderr):toBe("")
+    end)
+
+    test("multi file: backslash path separator at build environment", function()
+        local options = {
+            rootDir = "./test/bundle/pathSeparator/",
+            entry = "main",
+            include = { "./main.lua" },
+            output = "./test/bundle/pathSeparator/main.bundle.lua",
+        }
+
+        _ENV.package.config = "\\" .. _ENV.package.config:sub(2)
+        bundle(options)
+        _ENV.package.config = "/" .. _ENV.package.config:sub(2)
+
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\nmodule1\nmodule2\n")
         expect(stderr):toBe("")
@@ -89,7 +131,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local _, stderr = util.execute(options.output, "")
+        local _, stderr = util.execute(options.output)
 
         assert(stderr:find("Oops!") ~= nil, "error message not found")
         assert(stderr:find("module1.lua:3:") ~= nil, "error line not found")
@@ -105,7 +147,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         assert(stdout:find("Oops!") ~= nil, "error message not found in stdout")
         assert(stderr:find("Oops!") == nil, "error message found in stderr")
@@ -120,7 +162,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
 
         expect(stdout):toBe("main\nmodule1\n")
         expect(stderr):toBe("")
@@ -135,7 +177,7 @@ describe(debug.getinfo(1).short_src, function()
         }
         bundle(options)
 
-        local stdout, stderr = util.execute(options.output, "")
+        local stdout, stderr = util.execute(options.output)
         expect(stdout):toBe("main\nmodule1\n")
         expect(stderr):toBe("")
     end)
