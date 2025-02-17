@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.4.0...v0.5.0) (2025-02-17)
+
+
+### Features
+
+* add function to use `print` as fallback for `io.stderr:write` ([f87dfa7](https://github.com/Tsukina-7mochi/neblua/commit/f87dfa78fa074d84b8a13d06c86c7fb319158736))
+
 ## [0.4.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.3.0...v0.4.0) (2024-10-01)
 
 
