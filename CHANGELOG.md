@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.1...v0.5.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* fix path separators in package.path are not converted into internal path separator ([1c704f4](https://github.com/Tsukina-7mochi/neblua/commit/1c704f4b500b728b0fec9a7f00f9fd699a95d55b))
+
 ## [0.5.1](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.0...v0.5.1) (2025-02-17)
 
 
