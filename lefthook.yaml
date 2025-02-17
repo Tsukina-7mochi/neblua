@@ -1,0 +1,10 @@
+pre-push:
+  parallel: true
+  commands:
+    run-tests:
+      run: make test
+
+commit-msg:
+  commands:
+    commitlint:
+      run: 'npx --no -- commitlint --edit {1}'
