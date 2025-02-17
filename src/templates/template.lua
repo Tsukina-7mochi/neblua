@@ -44,7 +44,7 @@ local function split(str, searchStr)
 end
 
 local config = split(package.config, "\n")
-local pathSeparator = config[1]
+local pathSeparator = "/"
 local templateSeparator = config[2]
 local substitutionPoint = config[3]
 
