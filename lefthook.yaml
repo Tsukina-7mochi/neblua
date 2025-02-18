@@ -3,6 +3,8 @@ pre-push:
   commands:
     run-tests:
       run: make test
+    test-self-build:
+      run: make test-self-build
 
 commit-msg:
   commands:
