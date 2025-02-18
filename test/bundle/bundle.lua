@@ -50,6 +50,26 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
+    test("single file: call multi time", function()
+        local options = {
+            rootDir = "./test/bundle/singleFile/",
+            entry = "main",
+            include = { "./main.lua" },
+            output = "./test/bundle/singleFile/main.bundle.lua",
+        }
+        bundle(options)
+
+        local entryFilename = os.tmpname()
+        local entryFile = assert(io.open(entryFilename, "w"))
+        entryFile:write([[local chunk = loadfile("]] .. options.output .. [[") chunk() chunk()]])
+        entryFile:close()
+
+        local stdout, stderr = util.execute(entryFilename)
+
+        expect(stdout):toBe("main\nmain\n")
+        expect(stderr):toBe("")
+    end)
+
     test("multi file: module form", function()
         local options = {
             rootDir = "./test/bundle/multiFileModuleRequire/",

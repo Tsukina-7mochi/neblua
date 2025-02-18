@@ -164,7 +164,12 @@ end
 
 local fallbackStderr = __NEBLUA_FALLBACK_STDERR__
 
-local result = table.pack(xpcall(require, errorHandler, __NEBLUA_ENTRY__, ...))
+local loader = bundlerSearcher(__NEBLUA_ENTRY__)
+if loader == nil then
+    error("Cannot find entry point: " .. __NEBLUA_ENTRY__)
+end
+
+local result = table.pack(xpcall(loader, errorHandler, __NEBLUA_ENTRY__, ...))
 local success = result[1]
 -- print error to stdout and re-throw
 if not success then
