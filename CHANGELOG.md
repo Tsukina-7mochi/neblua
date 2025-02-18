@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.3](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.2...v0.5.3) (2025-02-18)
+
+
+### Bug Fixes
+
+* call loader of entry module directory instead of calling require ([#33](https://github.com/Tsukina-7mochi/neblua/issues/33)) ([a5aa391](https://github.com/Tsukina-7mochi/neblua/commit/a5aa391e69a4a134ab73c3c4400de6a3723073ec))
+
 ## [0.5.2](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.1...v0.5.2) (2025-02-17)
 
 
