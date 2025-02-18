@@ -16,10 +16,10 @@ $(TEST_LIB):
 	mkdir -p $(LIB)
 	curl -sSL https://github.com/Tsukina-7mochi/lua-testing-library/releases/latest/download/test.lua > $(TEST_LIB)
 
-.PHONY: check
-check: build
+.PHONY: test-self-build
+test-self-build: build
 	$(LUA) ./dist/neblua-cli.lua -e src.cli -o ./dist/temp.lua ./src/cli.lua
-	diff ./dist/neblua-cli.lua ./dist/temp.lua
+	test -z "$$(diff ./dist/neblua-cli.lua ./dist/temp.lua)"
 
 .PHONY: test
 test: $(TEST_LIB)
