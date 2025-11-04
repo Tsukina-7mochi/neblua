@@ -1,7 +1,7 @@
 ---Checks if given file is readable
 ---@param filename string
 ---@return boolean
-local function fileReadable(filename)
+local function fileReadable (filename)
     local file = io.open(filename, "r")
     if file == nil then
         return false
@@ -12,7 +12,7 @@ end
 
 ---Changes directory
 ---@param path string
-local function changeDir(path)
+local function changeDir (path)
     local success = os.execute("cd " .. path)
     if not success then
         error("Could not change directory to " .. path)
@@ -24,8 +24,10 @@ end
 ---@param stdin? string
 ---@return string stdout
 ---@return string stderr
-local function execute(filename, stdin)
-    if stdin == nil then stdin = "" end
+local function execute (filename, stdin)
+    if stdin == nil then
+        stdin = ""
+    end
 
     local stdoutFilename = os.tmpname()
     local stderrFilename = os.tmpname()
@@ -54,5 +56,5 @@ end
 return {
     fileReadable = fileReadable,
     changeDir = changeDir,
-    execute = execute
+    execute = execute,
 }

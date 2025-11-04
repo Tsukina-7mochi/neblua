@@ -18,7 +18,7 @@ package.bundleLoader[debug.getinfo(1).short_src] = {
 ---@param str string
 ---@param searchStr string
 ---@return string[]
-local function split(str, searchStr)
+local function split (str, searchStr)
     if #str == 0 then
         return { str }
     end
@@ -55,7 +55,7 @@ local internalPathSeparator = "/"
 --- Resolves a given path using the specified path separator
 ---@param path string The path to resolve
 ---@return string
-local function resolvePath(path)
+local function resolvePath (path)
     local segments = split(path, internalPathSeparator)
     local resultSegments = {}
 
@@ -91,7 +91,7 @@ end
 ---@return function
 ---@return string
 ---@overload fun(moduleName: string): nil
-local function bundlerSearcher(moduleName)
+local function bundlerSearcher (moduleName)
     moduleName = moduleName:gsub("%.", internalPathSeparator)
 
     local templates = split(package.path, templateSeparator)
@@ -114,7 +114,7 @@ if not alreadyInstalled then
     -- Replace dofile
     local originalDoFile = dofile
     ---@diagnostic disable-next-line: duplicate-set-field
-    _ENV.dofile = function(path)
+    _ENV.dofile = function (path)
         local loader = package.bundleLoader[path]
         if loader ~= nil and loader.loader ~= nil then
             return loader.loader()
@@ -126,7 +126,7 @@ if not alreadyInstalled then
     -- Replace loadfile
     local originalLoadFile = loadfile
     ---@diagnostic disable-next-line: duplicate-set-field
-    _ENV.loadfile = function(path, ...)
+    _ENV.loadfile = function (path, ...)
         local loader = package.bundleLoader[path]
         if loader ~= nil and loader.loader ~= nil then
             return loader.loader
@@ -140,11 +140,11 @@ local loaderLineOffset = -2
 ---Error handler for xpcall
 ---@param err any
 ---@return any
-local errorHandler = function(err)
+local errorHandler = function (err)
     local srcName = debug.getinfo(1).short_src:gsub("[^%w]", "%%%0")
     local pattern = srcName .. ":(%d+):"
 
-    local message = debug.traceback(err, 2):gsub(pattern, function(line)
+    local message = debug.traceback(err, 2):gsub(pattern, function (line)
         local lineNumber = tonumber(line)
 
         local loaderLine = -1

@@ -2,7 +2,7 @@
 ---@param str string
 ---@param searchStr string
 ---@return string[]
-local function split(str, searchStr)
+local function split (str, searchStr)
     if #str == 0 then
         return { str }
     end
