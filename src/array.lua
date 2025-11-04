@@ -2,7 +2,7 @@
 ---@param array T[]
 ---@param value T
 ---@return boolean
-local function includes(array, value)
+local function includes (array, value)
     for _, v in ipairs(array) do
         if v == value then
             return true
@@ -15,7 +15,7 @@ end
 ---@param array T[]
 ---@param predicate fun(value: T): boolean
 ---@return T[]
-local function filter(array, predicate)
+local function filter (array, predicate)
     local result = {}
     for _, v in ipairs(array) do
         if predicate(v) then
@@ -27,5 +27,5 @@ end
 
 return {
     includes = includes,
-    filter = filter
+    filter = filter,
 }

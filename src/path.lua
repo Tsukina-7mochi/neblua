@@ -5,14 +5,14 @@ local separator = config[1]
 
 ---@param path string
 ---@return string
-local function baseName(path)
+local function baseName (path)
     local segments = split(path, separator)
     return segments[#segments]
 end
 
 ---@param path string
 ---@return string
-local function extName(path)
+local function extName (path)
     ---@type string
     local baseName = baseName(path)
     local extStart, extEnd = baseName:find("%.[^%.]*$")
@@ -25,7 +25,7 @@ end
 
 ---@param path string
 ---@return string
-local function noExtName(path)
+local function noExtName (path)
     ---@type string
     local baseName = baseName(path)
     local extStart = baseName:find("%.")
@@ -39,7 +39,7 @@ end
 ---@param path string
 ---@param basePath string
 ---@return string
-local function relative(path, basePath)
+local function relative (path, basePath)
     local segments = {} --[[ @as string[] ]]
     local resultSegments = {} --[[ @as string[] ]]
     if path:sub(1, 1) == separator then

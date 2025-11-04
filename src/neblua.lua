@@ -19,15 +19,15 @@ local substitutionPoints = {
 
 -- TODO: support long string literals
 local requirePatterns = {
-    "require%s*\"([^\"]*)\"",
+    'require%s*"([^"]*)"',
     "require%s*'([^\"]*)'",
-    "require%s*%(%s*\"([^\"]*)\"%s*%)",
+    'require%s*%(%s*"([^"]*)"%s*%)',
     "require%s*%(%s*'([^\"]*)'%s*%)",
 }
 local requireTextPatterns = {
-    "requireText%s*\"([^\"]*)\"",
+    'requireText%s*"([^"]*)"',
     "requireText%s*'([^\"]*)'",
-    "requireText%s*%(%s*\"([^\"]*)\"%s*%)",
+    'requireText%s*%(%s*"([^"]*)"%s*%)',
     "requireText%s*%(%s*'([^\"]*)'%s*%)",
 }
 
@@ -36,14 +36,14 @@ local pathSeparator = "/"
 local templateSeparator = config[2]
 local substitutionPoint = config[3]
 local pathTemplates = split(package.path, templateSeparator)
-pathTemplates = array.filter(pathTemplates, function(v)
+pathTemplates = array.filter(pathTemplates, function (v)
     return v:sub(1, 1) == "."
 end)
 
 ---@param str string
 ---@param patterns string[]
 ---@return boolean
-local function anyPatternMatch(str, patterns)
+local function anyPatternMatch (str, patterns)
     for _, pattern in ipairs(patterns) do
         if str:match(pattern) then
             return true
@@ -57,13 +57,15 @@ end
 ---@param rootDir string
 ---@param excludePatterns string[]
 ---@return { path: string, slotContent: string }[]
-local function loadFileAsSlot(filename, moduleType, rootDir, excludePatterns)
+local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
     ---@type { path: string, slotContent: string }[]
     local results = {}
     local escapedFileName = filename:gsub("%%", "%%%%")
 
     local success, content = pcall(getFileContent, path.relative(filename, rootDir))
-    if not success then return {} end
+    if not success then
+        return {}
+    end
 
     if moduleType == "lua" then
         local loaded = moduleLoader.luaModule(escapedFileName, content)
@@ -129,7 +131,7 @@ end
 
 ---@param options BundleOptions
 ---@return NormalizedBundleOptions
-local function normalizeBundleOptions(options)
+local function normalizeBundleOptions (options)
     if type(options) ~= "table" then
         error("[neblua] Expected options to be a table")
     end
@@ -170,7 +172,7 @@ local function normalizeBundleOptions(options)
             if type(file.path) ~= "string" then
                 error("[neblua] Expected options.include[" .. i .. "].path to be a string")
             elseif type(file.type) ~= "string" then
-                error("[neblua] Expected options.include[" .. i .. "].type to be one of {\"lua\", \"text\"}")
+                error("[neblua] Expected options.include[" .. i .. '].type to be one of {"lua", "text"}')
             end
         else
             error("[neblua] Expected options.include[" .. i .. "] to be a string or a table")
@@ -181,7 +183,7 @@ local function normalizeBundleOptions(options)
         elseif include[i].type == "text" then
             --do nothing
         else
-            error("[neblua] Expected options.include[" .. i .. "].type to be one of {\"lua\", \"text\"}")
+            error("[neblua] Expected options.include[" .. i .. '].type to be one of {"lua", "text"}')
         end
     end
 
@@ -224,8 +226,8 @@ local function normalizeBundleOptions(options)
 end
 
 ---@param options BundleOptions
-local function bundle(options)
-    local verbosePrint = function(...)
+local function bundle (options)
+    local verbosePrint = function (...)
         if options.verbose == true then
             print("[neblua]", ...)
         end
@@ -251,7 +253,7 @@ local function bundle(options)
         end
     end
 
-    local entryName = "\"" .. options.entry:gsub("%%", "%%%%") .. "\""
+    local entryName = '"' .. options.entry:gsub("%%", "%%%%") .. '"'
     local slotContentsString = table.concat(slotContents, "\n"):gsub("%%", "%%%%")
     local fallbackStderr = "false"
     if options.fallbackStderr == true then

@@ -10,16 +10,16 @@ for _, val in ipairs(arg) do
     end
 end
 
-describe("all tests", function()
+describe("all tests", function ()
     if doUnitTests then
-        describe("unit tests", function()
+        describe("unit tests", function ()
             require("test.unit.bundle.path")
             require("test.unit.bundle.split")
         end)
     end
 
     if doBundleTests then
-        describe("bundle tests", function()
+        describe("bundle tests", function ()
             require("test.bundle.bundle")
         end)
     end

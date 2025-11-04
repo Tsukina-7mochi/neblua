@@ -4,8 +4,8 @@ local test = require("lib.test").test
 local describe = require("lib.test").describe
 local expect = require("lib.test").expect
 
-describe(debug.getinfo(1).short_src, function()
-    test("single file: module form entry", function()
+describe(debug.getinfo(1).short_src, function ()
+    test("single file: module form entry", function ()
         local options = {
             entry = "test.bundle.singleFile.main",
             include = { "./test/bundle/singleFile/main.lua" },
@@ -20,7 +20,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("single file: path form entry", function()
+    test("single file: path form entry", function ()
         local options = {
             entry = "./test/bundle/singleFile/main",
             include = { "./test/bundle/singleFile/main.lua" },
@@ -35,7 +35,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("single file: rootDir", function()
+    test("single file: rootDir", function ()
         local options = {
             rootDir = "./test/bundle/singleFile/",
             entry = "main",
@@ -50,7 +50,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("single file: call multi time", function()
+    test("single file: call multi time", function ()
         local options = {
             rootDir = "./test/bundle/singleFile/",
             entry = "main",
@@ -70,7 +70,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("multi file: module form", function()
+    test("multi file: module form", function ()
         local options = {
             rootDir = "./test/bundle/multiFileModuleRequire/",
             entry = "main",
@@ -85,7 +85,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("multi file: path form", function()
+    test("multi file: path form", function ()
         local options = {
             rootDir = "./test/bundle/multiFilePathRequire/",
             entry = "main",
@@ -100,7 +100,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("multi file: backslash path separator at execution environment", function()
+    test("multi file: backslash path separator at execution environment", function ()
         local options = {
             rootDir = "./test/bundle/pathSeparator/",
             entry = "main",
@@ -125,7 +125,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("multi file: backslash path separator at build environment", function()
+    test("multi file: backslash path separator at build environment", function ()
         local options = {
             rootDir = "./test/bundle/pathSeparator/",
             entry = "main",
@@ -145,7 +145,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("error line", function()
+    test("error line", function ()
         local options = {
             rootDir = "./test/bundle/error/",
             entry = "main",
@@ -160,7 +160,7 @@ describe(debug.getinfo(1).short_src, function()
         assert(stderr:find("module1.lua:3:") ~= nil, "error line not found")
     end)
 
-    test("redirect stderr", function()
+    test("redirect stderr", function ()
         local options = {
             rootDir = "./test/bundle/error/",
             entry = "main",
@@ -176,7 +176,7 @@ describe(debug.getinfo(1).short_src, function()
         assert(stderr:find("Oops!") == nil, "error message found in stderr")
     end)
 
-    test("loadfile", function()
+    test("loadfile", function ()
         local options = {
             rootDir = "./test/bundle/loadfile/",
             entry = "main",
@@ -191,7 +191,7 @@ describe(debug.getinfo(1).short_src, function()
         expect(stderr):toBe("")
     end)
 
-    test("dofile", function()
+    test("dofile", function ()
         local options = {
             rootDir = "./test/bundle/dofile/",
             entry = "main",

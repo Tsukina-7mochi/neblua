@@ -1,4 +1,4 @@
-local function luaModule(filename, functionBody)
+local function luaModule (filename, functionBody)
     return ([[
 package.bundleLoader["%s"] = {
     line = debug.getinfo(1).currentline,
@@ -11,10 +11,8 @@ package.bundleLoader["%s"] = {
 ]]):format(filename, functionBody)
 end
 
-local function textModule(filename, text)
-    local result = ([[package.loaded["%s"] = %q]])
-        :format(filename, text)
-        :gsub("\\\n", "\\n")
+local function textModule (filename, text)
+    local result = ([[package.loaded["%s"] = %q]]):format(filename, text):gsub("\\\n", "\\n")
     return result
 end
 
