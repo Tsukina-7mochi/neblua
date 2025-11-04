@@ -96,7 +96,9 @@ local function bundlerSearcher (moduleName)
 
     local templates = split(package.path, templateSeparator)
     for _, template in ipairs(templates) do
-        local path = template:gsub(pathSeparator, internalPathSeparator):gsub(substitutionPoint, moduleName)
+        local path = template
+            :gsub(pathSeparator, internalPathSeparator)
+            :gsub(substitutionPoint, moduleName)
         local resolvedPath = resolvePath(path)
         local loader = package.bundleLoader[resolvedPath]
         if loader ~= nil and loader.loader ~= nil then
@@ -150,13 +152,20 @@ local errorHandler = function (err)
         local loaderLine = -1
         local loaderName = nil
         for name, loader in pairs(package.bundleLoader) do
-            if loader.line ~= nil and loaderLine < loader.line and loader.line < lineNumber then
+            if
+                loader.line ~= nil
+                and loaderLine < loader.line
+                and loader.line < lineNumber
+            then
                 loaderLine = loader.line
                 loaderName = name
             end
         end
 
-        return loaderName .. ":" .. (lineNumber - loaderLine + loaderLineOffset) .. ":"
+        return loaderName
+            .. ":"
+            .. (lineNumber - loaderLine + loaderLineOffset)
+            .. ":"
     end)
 
     return message

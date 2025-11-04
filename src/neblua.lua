@@ -62,7 +62,8 @@ local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
     local results = {}
     local escapedFileName = filename:gsub("%%", "%%%%")
 
-    local success, content = pcall(getFileContent, path.relative(filename, rootDir))
+    local success, content =
+        pcall(getFileContent, path.relative(filename, rootDir))
     if not success then
         return {}
     end
@@ -85,9 +86,15 @@ local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
             moduleName = moduleName:gsub("%.", pathSeparator)
             if not anyPatternMatch(moduleName, excludePatterns) then
                 for _, template in ipairs(pathTemplates) do
-                    local modulePath = template:gsub(substitutionPoint, moduleName)
+                    local modulePath =
+                        template:gsub(substitutionPoint, moduleName)
                     local filename = path.relative(modulePath, ".")
-                    local loaded = loadFileAsSlot(filename, "lua", rootDir, excludePatterns)
+                    local loaded = loadFileAsSlot(
+                        filename,
+                        "lua",
+                        rootDir,
+                        excludePatterns
+                    )
                     for _, l in ipairs(loaded) do
                         table.insert(results, l)
                     end
@@ -100,7 +107,8 @@ local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
     for _, pattern in ipairs(requireTextPatterns) do
         for filename in content:gmatch(pattern) do
             if not anyPatternMatch(filename, excludePatterns) then
-                local loaded = loadFileAsSlot(filename, "text", rootDir, excludePatterns)
+                local loaded =
+                    loadFileAsSlot(filename, "text", rootDir, excludePatterns)
                 for _, l in ipairs(loaded) do
                     table.insert(results, l)
                 end
@@ -170,12 +178,24 @@ local function normalizeBundleOptions (options)
             include[i] = { path = file, type = "lua" }
         elseif type(file) == "table" then
             if type(file.path) ~= "string" then
-                error("[neblua] Expected options.include[" .. i .. "].path to be a string")
+                error(
+                    "[neblua] Expected options.include["
+                        .. i
+                        .. "].path to be a string"
+                )
             elseif type(file.type) ~= "string" then
-                error("[neblua] Expected options.include[" .. i .. '].type to be one of {"lua", "text"}')
+                error(
+                    "[neblua] Expected options.include["
+                        .. i
+                        .. '].type to be one of {"lua", "text"}'
+                )
             end
         else
-            error("[neblua] Expected options.include[" .. i .. "] to be a string or a table")
+            error(
+                "[neblua] Expected options.include["
+                    .. i
+                    .. "] to be a string or a table"
+            )
         end
 
         include[i].path = path.relative(include[i].path, ".")
@@ -183,7 +203,11 @@ local function normalizeBundleOptions (options)
         elseif include[i].type == "text" then
             --do nothing
         else
-            error("[neblua] Expected options.include[" .. i .. '].type to be one of {"lua", "text"}')
+            error(
+                "[neblua] Expected options.include["
+                    .. i
+                    .. '].type to be one of {"lua", "text"}'
+            )
         end
     end
 
@@ -202,7 +226,11 @@ local function normalizeBundleOptions (options)
     elseif type(exclude) == "table" then
         for i, pattern in ipairs(exclude) do
             if type(pattern) ~= "string" then
-                error("[neblua] Expected options.include[" .. i .. "].path to be a string")
+                error(
+                    "[neblua] Expected options.include["
+                        .. i
+                        .. "].path to be a string"
+                )
             end
         end
     else
@@ -243,7 +271,12 @@ local function bundle (options)
     local loadedFiles = {}
     local slotContents = {}
     for _, file in ipairs(options.include) do
-        local loaded = loadFileAsSlot(file.path, file.type, options.rootDir, options.exclude)
+        local loaded = loadFileAsSlot(
+            file.path,
+            file.type,
+            options.rootDir,
+            options.exclude
+        )
         for _, l in ipairs(loaded) do
             if not array.includes(loadedFiles, l.path) then
                 verbosePrint("Loaded " .. l.path)
@@ -254,7 +287,8 @@ local function bundle (options)
     end
 
     local entryName = '"' .. options.entry:gsub("%%", "%%%%") .. '"'
-    local slotContentsString = table.concat(slotContents, "\n"):gsub("%%", "%%%%")
+    local slotContentsString =
+        table.concat(slotContents, "\n"):gsub("%%", "%%%%")
     local fallbackStderr = "false"
     if options.fallbackStderr == true then
         fallbackStderr = "true"

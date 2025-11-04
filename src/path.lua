@@ -47,7 +47,10 @@ local function relative (path, basePath)
     else
         local pathSegments = split(path, separator)
         local basePathSegments = split(basePath, separator)
-        if basePathSegments[#basePathSegments] ~= "." and basePathSegments[#basePathSegments] ~= ".." then
+        if
+            basePathSegments[#basePathSegments] ~= "."
+            and basePathSegments[#basePathSegments] ~= ".."
+        then
             table.remove(basePathSegments)
         end
 

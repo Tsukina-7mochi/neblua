@@ -1,4 +1,5 @@
 syntax = "Lua54"
+column_width = 80
 indent_type = "Spaces"
 space_after_function_names = "Definitions"
 
