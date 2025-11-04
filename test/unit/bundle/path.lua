@@ -108,31 +108,45 @@ describe(debug.getinfo(1).short_src, function ()
         end)
 
         test("file.lua, path/to/otherFile", function ()
-            expect(path.relative("file.lua", "path/to/otherFile")):toBe("path/to/file.lua")
+            expect(path.relative("file.lua", "path/to/otherFile")):toBe(
+                "path/to/file.lua"
+            )
         end)
 
         test("file.lua, path/to/", function ()
-            expect(path.relative("file.lua", "path/to/")):toBe("path/to/file.lua")
+            expect(path.relative("file.lua", "path/to/")):toBe(
+                "path/to/file.lua"
+            )
         end)
 
         test("subpath/file.lua, path/to/otherFile", function ()
-            expect(path.relative("subpath/file.lua", "path/to/otherFile")):toBe("path/to/subpath/file.lua")
+            expect(path.relative("subpath/file.lua", "path/to/otherFile")):toBe(
+                "path/to/subpath/file.lua"
+            )
         end)
 
         test("../file.lua, path/to/otherFile", function ()
-            expect(path.relative("../file.lua", "path/to/otherFile")):toBe("path/file.lua")
+            expect(path.relative("../file.lua", "path/to/otherFile")):toBe(
+                "path/file.lua"
+            )
         end)
 
         test("file.lua, path/to/../", function ()
-            expect(path.relative("file.lua", "path/to/../")):toBe("path/file.lua")
+            expect(path.relative("file.lua", "path/to/../")):toBe(
+                "path/file.lua"
+            )
         end)
 
         test("file.lua, path/to/./", function ()
-            expect(path.relative("file.lua", "path/to/./")):toBe("path/to/file.lua")
+            expect(path.relative("file.lua", "path/to/./")):toBe(
+                "path/to/file.lua"
+            )
         end)
 
         test("/path/to/file.lua, path/to/otherFile", function ()
-            expect(path.relative("/path/to/file.lua", "path/to/otherFile")):toBe("/path/to/file.lua")
+            expect(path.relative("/path/to/file.lua", "path/to/otherFile")):toBe(
+                "/path/to/file.lua"
+            )
         end)
     end)
 end)
