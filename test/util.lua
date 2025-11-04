@@ -32,7 +32,12 @@ local function execute (filename, stdin)
     local stdoutFilename = os.tmpname()
     local stderrFilename = os.tmpname()
 
-    local command = "lua " .. filename .. " 1>" .. stdoutFilename .. " 2>" .. stderrFilename
+    local command = "lua "
+        .. filename
+        .. " 1>"
+        .. stdoutFilename
+        .. " 2>"
+        .. stderrFilename
 
     local file = assert(io.popen(command, "w"))
     if file == nil then

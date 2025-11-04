@@ -61,7 +61,11 @@ describe(debug.getinfo(1).short_src, function ()
 
         local entryFilename = os.tmpname()
         local entryFile = assert(io.open(entryFilename, "w"))
-        entryFile:write([[local chunk = loadfile("]] .. options.output .. [[") chunk() chunk()]])
+        entryFile:write(
+            [[local chunk = loadfile("]]
+                .. options.output
+                .. [[") chunk() chunk()]]
+        )
         entryFile:close()
 
         local stdout, stderr = util.execute(entryFilename)
@@ -100,50 +104,60 @@ describe(debug.getinfo(1).short_src, function ()
         expect(stderr):toBe("")
     end)
 
-    test("multi file: backslash path separator at execution environment", function ()
-        local options = {
-            rootDir = "./test/bundle/pathSeparator/",
-            entry = "main",
-            include = { "./main.lua" },
-            output = "./test/bundle/pathSeparator/main.bundle.lua",
-        }
-        bundle(options)
+    test(
+        "multi file: backslash path separator at execution environment",
+        function ()
+            local options = {
+                rootDir = "./test/bundle/pathSeparator/",
+                entry = "main",
+                include = { "./main.lua" },
+                output = "./test/bundle/pathSeparator/main.bundle.lua",
+            }
+            bundle(options)
 
-        local outFile = assert(io.open(options.output, "r"))
-        local content = outFile:read("*a")
-        outFile:close()
+            local outFile = assert(io.open(options.output, "r"))
+            local content = outFile:read("*a")
+            outFile:close()
 
-        outFile = assert(io.open(options.output, "w"))
-        outFile:write([[package.path = package.path:gsub(package.config:sub(1, 1), "\\")]])
-        outFile:write([[package.config = "\\" .. package.config:sub(2)]])
-        outFile:write(content)
-        outFile:close()
+            outFile = assert(io.open(options.output, "w"))
+            outFile:write(
+                [[package.path = package.path:gsub(package.config:sub(1, 1), "\\")]]
+            )
+            outFile:write([[package.config = "\\" .. package.config:sub(2)]])
+            outFile:write(content)
+            outFile:close()
 
-        local stdout, stderr = util.execute(options.output)
+            local stdout, stderr = util.execute(options.output)
 
-        expect(stdout):toBe("main\nmodule1\nmodule2\n")
-        expect(stderr):toBe("")
-    end)
+            expect(stdout):toBe("main\nmodule1\nmodule2\n")
+            expect(stderr):toBe("")
+        end
+    )
 
-    test("multi file: backslash path separator at build environment", function ()
-        local options = {
-            rootDir = "./test/bundle/pathSeparator/",
-            entry = "main",
-            include = { "./main.lua" },
-            output = "./test/bundle/pathSeparator/main.bundle.lua",
-        }
+    test(
+        "multi file: backslash path separator at build environment",
+        function ()
+            local options = {
+                rootDir = "./test/bundle/pathSeparator/",
+                entry = "main",
+                include = { "./main.lua" },
+                output = "./test/bundle/pathSeparator/main.bundle.lua",
+            }
 
-        _ENV.package.path = _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "\\")
-        _ENV.package.config = "\\" .. _ENV.package.config:sub(2)
-        bundle(options)
-        _ENV.package.path = _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "/")
-        _ENV.package.config = "/" .. _ENV.package.config:sub(2)
+            _ENV.package.path =
+                _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "\\")
+            _ENV.package.config = "\\" .. _ENV.package.config:sub(2)
+            bundle(options)
+            _ENV.package.path =
+                _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "/")
+            _ENV.package.config = "/" .. _ENV.package.config:sub(2)
 
-        local stdout, stderr = util.execute(options.output)
+            local stdout, stderr = util.execute(options.output)
 
-        expect(stdout):toBe("main\nmodule1\nmodule2\n")
-        expect(stderr):toBe("")
-    end)
+            expect(stdout):toBe("main\nmodule1\nmodule2\n")
+            expect(stderr):toBe("")
+        end
+    )
 
     test("error line", function ()
         local options = {

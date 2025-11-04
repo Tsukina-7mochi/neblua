@@ -12,7 +12,9 @@ package.bundleLoader["%s"] = {
 end
 
 local function textModule (filename, text)
-    local result = ([[package.loaded["%s"] = %q]]):format(filename, text):gsub("\\\n", "\\n")
+    local result = ([[package.loaded["%s"] = %q]])
+        :format(filename, text)
+        :gsub("\\\n", "\\n")
     return result
 end
 
