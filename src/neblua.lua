@@ -1,6 +1,7 @@
 local array = require("src.lib.array")
 local file = require("src.lib.file")
 local moduleLoader = require("src.moduleLoader")
+local normalizeBundleOptions = require("src.options").normalize
 local path = require("src.lib.path")
 local requireText = require("src.requireText")
 
@@ -69,7 +70,7 @@ local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
     local escapedFileName = filename:gsub("%%", "%%%%")
 
     local content, err = file.getContent(path.relative(filename, rootDir))
-    if err then
+    if err or content == nil then
         return {}
     end
 
@@ -124,141 +125,7 @@ local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
     return results
 end
 
----@class BundleOptions
----@field rootDir? string
----@field entry string
----@field include (string | { path: string, type: string })[]
----@field output string
----@field verbose? boolean
----@field exclude? string[]
----@field fallbackStderr? boolean
-
----@class NormalizedBundleOptions
----@field rootDir string
----@field entry string
----@field include { path: string, type: "lua" | "text" }[]
----@field output string
----@field verbose boolean
----@field exclude string[]
----@field fallbackStderr boolean
-
----@param options BundleOptions
----@return NormalizedBundleOptions
-local function normalizeBundleOptions (options)
-    if type(options) ~= "table" then
-        error("[neblua] Expected options to be a table")
-    end
-
-    local rootDir = options.rootDir
-    local entry = options.entry
-    local include = options.include
-    local output = options.output
-    local verbose = options.verbose
-    local exclude = options.exclude
-    local fallbackStderr = options.fallbackStderr
-
-    if rootDir == nil then
-        rootDir = "./"
-    else
-        if type(rootDir) ~= "string" then
-            error("[neblua] Expected options.rootDir to be a string or nil")
-        end
-
-        -- make rootDir to start with './' and end with '/'
-        if rootDir:sub(-1) ~= path.separator then
-            rootDir = rootDir .. path.separator
-        end
-        rootDir = path.relative(rootDir, ".")
-    end
-
-    if type(entry) ~= "string" then
-        error("[neblua] Expected options.entry to be a string")
-    end
-
-    if type(include) ~= "table" then
-        error("[neblua] Expected options.include to be a table")
-    end
-    for i, file in ipairs(include) do
-        if type(file) == "string" then
-            include[i] = { path = file, type = "lua" }
-        elseif type(file) == "table" then
-            if type(file.path) ~= "string" then
-                error(
-                    "[neblua] Expected options.include["
-                        .. i
-                        .. "].path to be a string"
-                )
-            elseif type(file.type) ~= "string" then
-                error(
-                    "[neblua] Expected options.include["
-                        .. i
-                        .. '].type to be one of {"lua", "text"}'
-                )
-            end
-        else
-            error(
-                "[neblua] Expected options.include["
-                    .. i
-                    .. "] to be a string or a table"
-            )
-        end
-
-        include[i].path = path.relative(include[i].path, ".")
-        if include[i].type == "lua" then
-        elseif include[i].type == "text" then
-            --do nothing
-        else
-            error(
-                "[neblua] Expected options.include["
-                    .. i
-                    .. '].type to be one of {"lua", "text"}'
-            )
-        end
-    end
-
-    if type(output) ~= "string" then
-        error("[neblua] Expected options.output to be a string")
-    end
-    output = path.relative(output, ".")
-
-    if verbose ~= nil and type(verbose) ~= "boolean" then
-        error("[neblua] Expected options.verbose to be a string or nil")
-    end
-    verbose = verbose == true
-
-    if exclude == nil then
-        exclude = {}
-    elseif type(exclude) == "table" then
-        for i, pattern in ipairs(exclude) do
-            if type(pattern) ~= "string" then
-                error(
-                    "[neblua] Expected options.include["
-                        .. i
-                        .. "].path to be a string"
-                )
-            end
-        end
-    else
-        error("[neblua] Expected options.exclude to be a string[]")
-    end
-
-    if fallbackStderr ~= nil and type(fallbackStderr) ~= "boolean" then
-        error("[neblua] Expected options.fallbackStderr to be a boolean or nil")
-    end
-    fallbackStderr = fallbackStderr == true
-
-    return {
-        rootDir = rootDir,
-        entry = entry,
-        include = include,
-        output = output,
-        verbose = verbose,
-        exclude = exclude,
-        fallbackStderr = fallbackStderr,
-    }
-end
-
----@param options BundleOptions
+---@param options PartialBundleOptions
 local function bundle (options)
     local verbosePrint = function (...)
         if options.verbose == true then
@@ -266,7 +133,10 @@ local function bundle (options)
         end
     end
 
-    local options = normalizeBundleOptions(options)
+    local options, err = normalizeBundleOptions(options)
+    if err or options == nil then
+        error("[neblua] Invalid options: " .. err)
+    end
 
     verbosePrint("Root  : " .. options.rootDir)
     verbosePrint("Entry : " .. options.entry)
