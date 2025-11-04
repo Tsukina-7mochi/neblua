@@ -17,6 +17,4 @@ local function requireText (path)
     return package.loaded[path]
 end
 
-return {
-    requireText = requireText,
-}
+return requireText

@@ -2,7 +2,7 @@ local array = require("src.lib.array")
 local file = require("src.lib.file")
 local moduleLoader = require("src.moduleLoader")
 local path = require("src.lib.path")
-local requireText = require("src.requireModule").requireText
+local requireText = require("src.requireText")
 
 ---@param str string
 ---@param sep string
