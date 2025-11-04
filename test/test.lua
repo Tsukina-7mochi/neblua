@@ -14,7 +14,6 @@ describe("all tests", function ()
     if doUnitTests then
         describe("unit tests", function ()
             require("test.unit.bundle.path")
-            require("test.unit.bundle.split")
         end)
     end
 

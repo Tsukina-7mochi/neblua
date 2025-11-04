@@ -1,4 +1,4 @@
-local path = require("src.path")
+local path = require("src.lib.path")
 local test = require("lib.test").test
 local describe = require("lib.test").describe
 local expect = require("lib.test").expect

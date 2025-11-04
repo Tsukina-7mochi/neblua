@@ -1,4 +1,11 @@
-local split = require("src.string").split
+local array = require("src.lib.array")
+
+---@param str string
+---@param sep string
+---@return string[]
+local function split (str, sep)
+    return array.collect(str:gmatch("([^" .. sep .. "]*)"))
+end
 
 local config = split(package.config, "\n")
 local separator = config[1]

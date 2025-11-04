@@ -1,9 +1,15 @@
-local getFileContent = require("src.getFileContent")
+local array = require("src.lib.array")
+local file = require("src.lib.file")
 local moduleLoader = require("src.moduleLoader")
-local path = require("src.path")
+local path = require("src.lib.path")
 local requireText = require("src.requireModule").requireText
-local split = require("src.string").split
-local array = require("src.array")
+
+---@param str string
+---@param sep string
+---@return string[]
+local function split (str, sep)
+    return array.collect(str:gmatch("([^" .. sep .. "]+)"))
+end
 
 local appInfo = {
     name = "neblua",
@@ -62,9 +68,8 @@ local function loadFileAsSlot (filename, moduleType, rootDir, excludePatterns)
     local results = {}
     local escapedFileName = filename:gsub("%%", "%%%%")
 
-    local success, content =
-        pcall(getFileContent, path.relative(filename, rootDir))
-    if not success then
+    local content, err = file.getContent(path.relative(filename, rootDir))
+    if err then
         return {}
     end
 
