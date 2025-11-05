@@ -24,9 +24,7 @@ bundle {
     entry = "src.main",
     output = "./dist/main.bundle.lua",
     include = {
-        "./src/main.lua",
-
-        -- manually add files (for sub-effects)
+        -- manually link files (useful when using dofile or loadfile)
         "./src/foo.lua",
 
         -- specifying types
@@ -45,6 +43,8 @@ bundle {
 ```
 $ lua neblua-cli [options] [files]
 ```
+
+Add positional arguments to explicitly add files
 
 |       options       |    value    |                function                |
 | ------------------- | ----------- | -------------------------------------- |
@@ -71,7 +71,7 @@ Bundles input files into one file.
 | ---------------- | ----------------- |  ------------------------------------------------------------ |
 | `rootDir`        | `string \| nil`   | root directory of source files                                |
 | `entry`          | `string`          | entry module name                                             |
-| `include`        | `File[]`          | source files (where `File` is `string \| { path: string, type: string }`) |
+| `include`        | `File[] |\ nil`   | source files (where `File` is `string \| { path: string, type: string }`) |
 | `output`         | `string`          | output file name                                              |
 | `verbose`        | `boolean \| nil`  | enable verbose output                                         |
 | `exclude`        | `string[] \| nil` | excludes files from bundle with patterns                      |
