@@ -2,7 +2,7 @@ local luaRenderer = require("src.renderer.luaModule")
 local requireText = require("src.requireText")
 local textRenderer = require("src.renderer.textModule")
 
-local template = requireText("src.renderer.templates.template")
+local template = requireText("src/renderer/templates/template.lua")
 local templatePatterns = {
     entry = "__NEBLUA_ENTRY__",
     fallbackStderr = "__NEBLUA_FALLBACK_STDERR__",

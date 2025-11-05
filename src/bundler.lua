@@ -2,6 +2,34 @@ local loader = require("src.loader")
 local renderer = require("src.renderer.init")
 local resolver = require("src.resolver")
 
+---@param type "lua" | "text"
+---@param specifier string
+---@param pathTemplates string
+---@param rootDir string
+---@param ignorePatterns string[]
+---@return ResolverResult?
+---@return string? errmsg
+local function resolveBasedOnType (
+    type,
+    specifier,
+    pathTemplates,
+    rootDir,
+    ignorePatterns
+)
+    if type == "lua" then
+        return resolver.resolveModule(
+            specifier,
+            pathTemplates,
+            rootDir,
+            ignorePatterns
+        )
+    elseif type == "text" then
+        return resolver.resolvePath(specifier, rootDir, ignorePatterns)
+    end
+
+    return nil, "internal error: unknown module type: " .. tostring(type)
+end
+
 ---@param options BundleOptions
 local function bundle (options)
     local verbosePrint = function (...)
@@ -81,21 +109,16 @@ local function bundle (options)
 
         -- resolve and queue imports
         for _, import in pairs(result.imports) do
-            local resolved, err = resolver.resolveModule(
+            local resolved, err = resolveBasedOnType(
+                import.type,
                 import.name,
                 package.path,
                 options.rootDir,
                 options.exclude
             )
             if err then
-                error(
-                    "In "
-                        .. spec.path
-                        .. ", Failed to resolve module '"
-                        .. import.name
-                        .. "': "
-                        .. err
-                )
+                -- stylua: ignore
+                error("In " .. spec.path .. ", Failed to resolve module '" .. import.name .. "': " .. err)
             elseif resolved ~= nil then
                 table.insert(modulesToLoad, {
                     type = import.type,
