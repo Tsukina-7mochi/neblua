@@ -28,13 +28,14 @@ bundle {
 
         -- manually add files (for sub-effects)
         "./src/foo.lua",
-    exclude = {},    --Optional
-    rootDir = nil,   --Optional
 
         -- specifying types
         { path: "./src/bar.lua", type: "lua" },
         { path: "./src/some.txt", type: "text" },
     },
+    exclude = {},    --Optional
+    external = {},   --Optional
+    rootDir = nil,   --Optional
     verbose = true,  --Optional
 }
 ```
@@ -66,15 +67,16 @@ Bundles input files into one file.
 
 #### BuildOptions
 
-|       key        |       type        |             value                        |
-| ---------------- | ----------------- |  --------------------------------------- |
-| `rootDir`        | `string \| nil`   | root directory of source files           |
-| `entry`          | `string`          | entry module name                        |
+|       key        |       type        |             value                                             |
+| ---------------- | ----------------- |  ------------------------------------------------------------ |
+| `rootDir`        | `string \| nil`   | root directory of source files                                |
+| `entry`          | `string`          | entry module name                                             |
 | `include`        | `File[]`          | source files (where `File` is `string \| { path: string, type: string }`) |
-| `output`         | `string`          | output file name                         |
-| `verbose`        | `boolean \| nil`  | enable verbose output                    |
-| `exclude`        | `string[] \| nil` | excludes files from bundle with patterns |
-| `fallbackStderr` | `string[] \| nil` | enable use of stdout instead of stderr   |
+| `output`         | `string`          | output file name                                              |
+| `verbose`        | `boolean \| nil`  | enable verbose output                                         |
+| `exclude`        | `string[] \| nil` | excludes files from bundle with patterns                      |
+| `external`       | `string[] \| nil` | mark a module or file as external to prevent resolution error |
+| `fallbackStderr` | `string[] \| nil` | enable use of stdout instead of stderr                        |
 
 ### neblua.requireText
 

@@ -165,6 +165,54 @@ describe(debug.getinfo(1).short_src, function ()
         assert(stderr:find("Oops!") == nil, "error message found in stderr")
     end)
 
+    test("external: build success", function ()
+        local options = {
+            rootDir = "./test/bundle/external/",
+            include = {},
+            external = {
+                "^module1$", -- module does not exist in the project
+                "^./resource.txt$",
+            },
+            entry = "main",
+            output = "./test/bundle/external/main.bundle.lua",
+        }
+        bundle(options)
+
+        -- inject module1 implementation and dummy requireText
+        local outFile = assert(io.open(options.output, "r"))
+        local content = outFile:read("*a")
+        outFile:close()
+
+        outFile = assert(io.open(options.output, "w"))
+        outFile:write(
+            'package.preload["module1"] = function () print("module1") end\n'
+        )
+        outFile:write("requireText = function() end\n")
+        outFile:write(content)
+        outFile:close()
+
+        local stdout, stderr = util.execute(options.output)
+
+        expect(stdout):toBe("main\nmodule1\n")
+        expect(stderr):toBe("")
+    end)
+
+    test("external: build failure", function ()
+        local options = {
+            rootDir = "./test/bundle/external/",
+            include = {},
+            entry = "main",
+            output = "./test/bundle/external/main.bundle.lua",
+        }
+        local success, err = pcall(bundle, options)
+
+        expect(success):toBe(false)
+        assert(
+            string.find(err, "Cannot resolve module: module1") ~= nil,
+            "error message not found"
+        )
+    end)
+
     test("loadfile", function ()
         local options = {
             rootDir = "./test/bundle/loadfile/",

@@ -7,6 +7,7 @@ local path = require("src.lib.path")
 ---@field output string
 ---@field verbose? boolean
 ---@field exclude? string[]
+---@field external? string[]
 ---@field fallbackStderr? boolean
 
 ---@class BundleOptions
@@ -16,6 +17,7 @@ local path = require("src.lib.path")
 ---@field output string
 ---@field verbose boolean
 ---@field exclude string[]
+---@field external string[]
 ---@field fallbackStderr boolean
 
 ---@param options PartialBundleOptions
@@ -32,6 +34,7 @@ local function normalize (options)
     local output = options.output
     local verbose = options.verbose
     local exclude = options.exclude
+    local external = options.external
     local fallbackStderr = options.fallbackStderr
 
     if rootDir == nil then
@@ -99,6 +102,19 @@ local function normalize (options)
         return nil, "Expected options.exclude to be a string[]"
     end
 
+    if external == nil then
+        external = {}
+    elseif type(external) == "table" then
+        for i, pattern in ipairs(external) do
+            if type(pattern) ~= "string" then
+                -- stylua: ignore
+                return nil, "Expected options.external[" .. i .. "] to be a string"
+            end
+        end
+    else
+        return nil, "Expected options.external to be a string[]"
+    end
+
     if fallbackStderr ~= nil and type(fallbackStderr) ~= "boolean" then
         return nil, "Expected options.fallbackStderr to be a boolean or nil"
     end
@@ -111,6 +127,7 @@ local function normalize (options)
         output = output,
         verbose = verbose,
         exclude = exclude,
+        external = external,
         fallbackStderr = fallbackStderr,
     }
 end

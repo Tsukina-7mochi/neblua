@@ -35,10 +35,18 @@ end
 ---@param path string
 ---@param rootDir string
 ---@param ignorePatterns string[]
+---@param externalPatterns string[]
 ---@return ResolverResult?
 ---@return string? errmsg
-local function resolvePath (path, rootDir, ignorePatterns)
-    local resolvedPath, err = pathUtil.join(rootDir, path)
+local function resolvePath (path, rootDir, ignorePatterns, externalPatterns)
+    local normalizedPath = pathUtil.normalize(path)
+    for _, pattern in ipairs(externalPatterns) do
+        if normalizedPath:match(pattern) then
+            return nil, nil
+        end
+    end
+
+    local resolvedPath, err = pathUtil.join(rootDir, normalizedPath)
     if err or resolvedPath == nil then
         return nil, "Cannot resolve path: " .. path
     end
@@ -61,14 +69,28 @@ end
 ---@param pathTemplates string
 ---@param rootDir string
 ---@param ignorePatterns string[]
+---@param externalPatterns string[]
 ---@return ResolverResult?
 ---@return string? errmsg
-local function resolveModule (moduleName, pathTemplates, rootDir, ignorePatterns)
+local function resolveModule (
+    moduleName,
+    pathTemplates,
+    rootDir,
+    ignorePatterns,
+    externalPatterns
+)
+    for _, pattern in ipairs(externalPatterns) do
+        if moduleName:match(pattern) then
+            return nil, nil
+        end
+    end
+
     local path = moduleName:gsub("%.", pathUtil.separator)
     local possiblePaths = applyTemplates(pathTemplates, path)
 
     for _, possiblePath in ipairs(possiblePaths) do
-        local result, err = resolvePath(possiblePath, rootDir, ignorePatterns)
+        local result, err =
+            resolvePath(possiblePath, rootDir, ignorePatterns, {})
         if err == nil and result ~= nil then
             return result, nil
         end
