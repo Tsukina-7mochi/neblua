@@ -14,6 +14,22 @@ local function getContent (filename)
     return content
 end
 
+---Returns whether a file is readable.
+---@param filename string
+---@return boolean
+---@return string?
+local function isReadable (filename)
+    local file, err = io.open(filename, "r")
+    if file == nil then
+        return false, err
+    end
+
+    file:close()
+
+    return true, nil
+end
+
 return {
     getContent = getContent,
+    isReadable = isReadable,
 }

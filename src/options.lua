@@ -41,16 +41,13 @@ local function normalize (options)
             return nil, "Expected options.rootDir to be a string or nil"
         end
 
-        -- make rootDir to start with './' and end with '/'
-        if rootDir:sub(-1) ~= path.separator then
-            rootDir = rootDir .. path.separator
-        end
-        rootDir = path.relative(rootDir, ".")
+        rootDir = path.normalize(rootDir)
     end
 
     if type(entry) ~= "string" then
         return nil, "Expected options.entry to be a string"
     end
+    entry = path.normalize(entry)
 
     if type(include) ~= "table" then
         return nil, "Expected options.include to be a table"
@@ -72,11 +69,8 @@ local function normalize (options)
             return nil, "Expected options.include[" .. i .. "] to be a string or a table"
         end
 
-        include[i].path = path.relative(include[i].path, ".")
-        if include[i].type == "lua" then
-        elseif include[i].type == "text" then
-            --do nothing
-        else
+        include[i].path = path.normalize(include[i].path)
+        if include[i].type ~= "lua" and include[i].type ~= "text" then
             -- stylua: ignore
             return nil, "Expected options.include[" .. i .. '].type to be one of {"lua", "text"}'
         end
@@ -85,7 +79,7 @@ local function normalize (options)
     if type(output) ~= "string" then
         return nil, "Expected options.output to be a string"
     end
-    output = path.relative(output, ".")
+    output = path.normalize(output)
 
     if verbose ~= nil and type(verbose) ~= "boolean" then
         return nil, "Expected options.verbose to be a string or nil"

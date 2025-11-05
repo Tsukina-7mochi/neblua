@@ -1,20 +1,21 @@
 local file = require("src.lib.file")
+local resolver = require("src.resolver")
 
 ---require file as a string
----@param path string
-local function requireText (path)
-    if package.loaded[path] ~= nil then
-        return package.loaded[path]
+---@param moduleName string
+---@return string
+local function requireText (moduleName)
+    if package.loaded[moduleName] ~= nil then
+        return package.loaded[moduleName]
     end
 
-    local content, err = file.getContent(path)
-    if err then
-        error("[neblua] Error loading text file '" .. path .. "': " .. err)
-    end
+    local resolved =
+        assert(resolver.resolveModule(moduleName, package.path, ".", {}))
+    local content = assert(file.getContent(resolved.path))
 
-    package.loaded[path] = content
+    package.loaded[moduleName] = content
 
-    return package.loaded[path]
+    return package.loaded[moduleName]
 end
 
 return requireText

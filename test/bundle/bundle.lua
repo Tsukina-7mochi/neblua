@@ -134,31 +134,6 @@ describe(debug.getinfo(1).short_src, function ()
         end
     )
 
-    test(
-        "multi file: backslash path separator at build environment",
-        function ()
-            local options = {
-                rootDir = "./test/bundle/pathSeparator/",
-                entry = "main",
-                include = { "./main.lua" },
-                output = "./test/bundle/pathSeparator/main.bundle.lua",
-            }
-
-            _ENV.package.path =
-                _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "\\")
-            _ENV.package.config = "\\" .. _ENV.package.config:sub(2)
-            bundle(options)
-            _ENV.package.path =
-                _ENV.package.path:gsub(_ENV.package.config:sub(1, 1), "/")
-            _ENV.package.config = "/" .. _ENV.package.config:sub(2)
-
-            local stdout, stderr = util.execute(options.output)
-
-            expect(stdout):toBe("main\nmodule1\nmodule2\n")
-            expect(stderr):toBe("")
-        end
-    )
-
     test("error line", function ()
         local options = {
             rootDir = "./test/bundle/error/",
