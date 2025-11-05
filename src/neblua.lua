@@ -4,7 +4,7 @@ local requireText = require("src.requireText")
 
 local appInfo = {
     name = "neblua",
-    version = "0.5.3",
+    version = requireText("version.txt"),
 }
 
 ---@param options PartialBundleOptions
