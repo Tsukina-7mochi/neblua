@@ -3,7 +3,7 @@ local path = require("src.lib.path")
 ---@class PartialBundleOptions
 ---@field rootDir? string
 ---@field entry string
----@field include (string | { path: string, type: string })[]
+---@field include? (string | { path: string, type: string })[]
 ---@field output string
 ---@field verbose? boolean
 ---@field exclude? string[]
@@ -52,31 +52,34 @@ local function normalize (options)
     end
     entry = path.normalize(entry)
 
-    if type(include) ~= "table" then
-        return nil, "Expected options.include to be a table"
-    end
-    for i, file in ipairs(include) do
-        if type(file) == "string" then
-            include[i] = { path = file, type = "lua" }
-        elseif type(file) == "table" then
-            if type(file.path) ~= "string" then
+    if include == nil then
+        include = {}
+    elseif type(include) == "table" then
+        for i, file in ipairs(include) do
+            if type(file) == "string" then
+                include[i] = { path = file, type = "lua" }
+            elseif type(file) == "table" then
+                if type(file.path) ~= "string" then
+                    -- stylua: ignore
+                    return nil, "Expected options.include[" .. i .. "].path to be a string"
+                elseif type(file.type) ~= "string" then
+                    -- stylua: ignore
+                    return nil,
+                        "Expected options.include[" .. i .. '].type to be one of {"lua", "text"}'
+                end
+            else
                 -- stylua: ignore
-                return nil, "Expected options.include[" .. i .. "].path to be a string"
-            elseif type(file.type) ~= "string" then
-                -- stylua: ignore
-                return nil,
-                    "Expected options.include[" .. i .. '].type to be one of {"lua", "text"}'
+                return nil, "Expected options.include[" .. i .. "] to be a string or a table"
             end
-        else
-            -- stylua: ignore
-            return nil, "Expected options.include[" .. i .. "] to be a string or a table"
-        end
 
-        include[i].path = path.normalize(include[i].path)
-        if include[i].type ~= "lua" and include[i].type ~= "text" then
-            -- stylua: ignore
-            return nil, "Expected options.include[" .. i .. '].type to be one of {"lua", "text"}'
+            include[i].path = path.normalize(include[i].path)
+            if include[i].type ~= "lua" and include[i].type ~= "text" then
+                -- stylua: ignore
+                return nil, "Expected options.include[" .. i .. '].type to be one of {"lua", "text"}'
+            end
         end
+    else
+        return nil, "Expected options.include to be a table"
     end
 
     if type(output) ~= "string" then
