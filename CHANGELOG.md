@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.3...v0.6.0) (2025-11-05)
+
+
+### Features
+
+* add and remove methods to path library ([72ceafa](https://github.com/Tsukina-7mochi/neblua/commit/72ceafa0cb3f363bc71fb834592fc7dbb403f567))
+* add external option ([c693536](https://github.com/Tsukina-7mochi/neblua/commit/c6935360180373fd572c4f169deb3b7a0bf935ea))
+* change includes to opt-in ([c0f3a58](https://github.com/Tsukina-7mochi/neblua/commit/c0f3a58adb62c7036c64da09a0ef4f85580e055b))
+* revert require text to take path-form sepcifier ([40deb83](https://github.com/Tsukina-7mochi/neblua/commit/40deb83f263542fee92ac315024aa360ac86bd52))
+* revert require text to take path-form sepcifier ([93a288f](https://github.com/Tsukina-7mochi/neblua/commit/93a288fd2c13de76c4c20b701ec8ee04a21c9606))
+* rewrite bundler ([2166312](https://github.com/Tsukina-7mochi/neblua/commit/216631250d1378d94a385d0e8f371e27c17f0874))
+
 ## [0.5.3](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.2...v0.5.3) (2025-02-18)
 
 
