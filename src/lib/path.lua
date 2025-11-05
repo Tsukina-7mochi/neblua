@@ -7,8 +7,7 @@ local function split (str, sep)
     return array.collect(str:gmatch("([^" .. sep .. "]*)"))
 end
 
-local config = split(package.config, "\n")
-local separator = config[1]
+local separator = package.config:sub(1, 1)
 
 ---@param path string
 ---@return string
@@ -44,70 +43,60 @@ local function noExtName (path)
 end
 
 ---@param path string
----@param basePath string
 ---@return string
-local function relative (path, basePath)
-    local segments = {} --[[ @as string[] ]]
-    local resultSegments = {} --[[ @as string[] ]]
-    if path:sub(1, 1) == separator then
-        segments = split(path, separator)
-    else
-        local pathSegments = split(path, separator)
-        local basePathSegments = split(basePath, separator)
-        if
-            basePathSegments[#basePathSegments] ~= "."
-            and basePathSegments[#basePathSegments] ~= ".."
-        then
-            table.remove(basePathSegments)
-        end
+local function normalize (path)
+    local segments = split(path, separator)
 
-        segments = basePathSegments
-        for _, seg in ipairs(pathSegments) do
-            table.insert(segments, seg)
-        end
-    end
-
-    if segments[1] == "." then
-        table.insert(resultSegments, ".")
-    end
-    if segments[1] == "" then
-        table.insert(resultSegments, "")
-    end
-
-    for _, seg in ipairs(segments) do
-        if seg == "." or seg == "" then
-            -- Do nothing
-        elseif seg == ".." then
-            if #resultSegments == 0 then
-                table.insert(resultSegments, seg)
-            elseif #resultSegments == 1 then
-                if resultSegments[1] == "" then
-                    error("invalid paths (cannot go above root directory)")
-                elseif resultSegments[1] == "." then
-                    table.remove(resultSegments)
-                    table.insert(resultSegments, seg)
-                elseif resultSegments[1] == ".." then
-                    table.insert(resultSegments, seg)
-                end
-            else
-                table.remove(resultSegments)
-            end
+    local idx = 2
+    while idx <= #segments do
+        if segments[idx] == "" or segments[idx] == "." then
+            table.remove(segments, idx)
         else
-            table.insert(resultSegments, seg)
+            idx = idx + 1
         end
     end
 
-    if segments[#segments] == "" then
-        table.insert(resultSegments, "")
+    idx = 1
+    while idx <= #segments do
+        if
+            segments[idx] == ".."
+            and idx > 1
+            and (segments[idx - 1] ~= ".." and segments[idx - 1] ~= "")
+        then
+            table.remove(segments, idx)
+            table.remove(segments, idx - 1)
+            idx = idx - 1
+        else
+            idx = idx + 1
+        end
     end
 
-    return table.concat(resultSegments, separator)
+    if #segments == 0 then
+        return "."
+    elseif #segments == 1 and segments[1] == "" then
+        return separator
+    end
+
+    if segments[1] ~= "" and segments[1] ~= "." and segments[1] ~= ".." then
+        table.insert(segments, 1, ".")
+    end
+
+    return table.concat(segments, separator)
+end
+
+---@param ... string
+---@return string
+local function join (...)
+    return normalize(table.concat({ ... }, separator))
 end
 
 return {
     separator = separator,
+
     baseName = baseName,
     extName = extName,
     noExtName = noExtName,
-    relative = relative,
+
+    normalize = normalize,
+    join = join,
 }

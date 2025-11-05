@@ -86,66 +86,138 @@ describe(debug.getinfo(1).short_src, function ()
         end)
     end)
 
-    describe("relative", function ()
-        test("file.lua, /", function ()
-            expect(path.relative("file.lua", "/")):toBe("/file.lua")
-        end)
-
-        test("file.lua, .", function ()
-            expect(path.relative("file.lua", ".")):toBe("./file.lua")
-        end)
-
-        test("file.lua, ./", function ()
-            expect(path.relative("file.lua", "./")):toBe("./file.lua")
-        end)
-
-        test("file.lua, ..", function ()
-            expect(path.relative("file.lua", "..")):toBe("../file.lua")
-        end)
-
-        test("file.lua, ../", function ()
-            expect(path.relative("file.lua", "../")):toBe("../file.lua")
-        end)
-
-        test("file.lua, path/to/otherFile", function ()
-            expect(path.relative("file.lua", "path/to/otherFile")):toBe(
-                "path/to/file.lua"
+    describe("normalize", function ()
+        test("path/to/file.lua", function ()
+            expect(path.normalize("path/to/file.lua")):toBe(
+                "./path/to/file.lua"
             )
         end)
 
-        test("file.lua, path/to/", function ()
-            expect(path.relative("file.lua", "path/to/")):toBe(
-                "path/to/file.lua"
+        test("path//to///file.lua", function ()
+            expect(path.normalize("path//to///file.lua")):toBe(
+                "./path/to/file.lua"
             )
         end)
 
-        test("subpath/file.lua, path/to/otherFile", function ()
-            expect(path.relative("subpath/file.lua", "path/to/otherFile")):toBe(
-                "path/to/subpath/file.lua"
-            )
+        test("/file.lua", function ()
+            expect(path.normalize("/file.lua")):toBe("/file.lua")
         end)
 
-        test("../file.lua, path/to/otherFile", function ()
-            expect(path.relative("../file.lua", "path/to/otherFile")):toBe(
-                "path/file.lua"
-            )
-        end)
-
-        test("file.lua, path/to/../", function ()
-            expect(path.relative("file.lua", "path/to/../")):toBe(
-                "path/file.lua"
-            )
-        end)
-
-        test("file.lua, path/to/./", function ()
-            expect(path.relative("file.lua", "path/to/./")):toBe(
-                "path/to/file.lua"
-            )
-        end)
-
-        test("/path/to/file.lua, path/to/otherFile", function ()
-            expect(path.relative("/path/to/file.lua", "path/to/otherFile")):toBe(
+        test("///path/to/file.lua", function ()
+            expect(path.normalize("///path/to/file.lua")):toBe(
                 "/path/to/file.lua"
+            )
+        end)
+
+        test("./file.lua", function ()
+            expect(path.normalize("./file.lua")):toBe("./file.lua")
+        end)
+
+        test("path/./to/././file.lua", function ()
+            expect(path.normalize("path/./to/././file.lua")):toBe(
+                "./path/to/file.lua"
+            )
+        end)
+
+        test("./././path/to/file.lua", function ()
+            expect(path.normalize("./././path/to/file.lua")):toBe(
+                "./path/to/file.lua"
+            )
+        end)
+
+        test("path/to/../file.lua", function ()
+            expect(path.normalize("path/to/../file.lua")):toBe(
+                "./path/file.lua"
+            )
+        end)
+
+        test("../file.lua", function ()
+            expect(path.normalize("../file.lua")):toBe("../file.lua")
+        end)
+
+        test("../../file.lua", function ()
+            expect(path.normalize("../../file.lua")):toBe("../../file.lua")
+        end)
+
+        test("path/to/../../../file.lua", function ()
+            expect(path.normalize("path/to/../../../file.lua")):toBe(
+                "../file.lua"
+            )
+        end)
+
+        test("/", function ()
+            expect(path.normalize("/")):toBe("/")
+        end)
+
+        test(".", function ()
+            expect(path.normalize(".")):toBe(".")
+        end)
+
+        test("./", function ()
+            expect(path.normalize("./")):toBe(".")
+        end)
+
+        test("../", function ()
+            expect(path.normalize("../")):toBe("..")
+        end)
+
+        test("/../", function ()
+            expect(path.normalize("/../")):toBe("/..")
+        end)
+    end)
+
+    describe("join", function ()
+        test("/, file.lua", function ()
+            expect(path.join("/", "file.lua")):toBe("/file.lua")
+        end)
+
+        test("., file.lua", function ()
+            expect(path.join(".", "file.lua")):toBe("./file.lua")
+        end)
+
+        test("./, file.lua", function ()
+            expect(path.join("./", "file.lua")):toBe("./file.lua")
+        end)
+
+        test(".., file.lua", function ()
+            expect(path.join("..", "file.lua")):toBe("../file.lua")
+        end)
+
+        test("../, file.lua", function ()
+            expect(path.join("../", "file.lua")):toBe("../file.lua")
+        end)
+
+        test("path/to, file.lua", function ()
+            expect(path.join("path/to", "file.lua")):toBe("./path/to/file.lua")
+        end)
+
+        test("path/to/, file.lua", function ()
+            expect(path.join("path/to/", "file.lua")):toBe("./path/to/file.lua")
+        end)
+
+        test("path/to, subpath/file.lua", function ()
+            expect(path.join("path/to", "subpath/file.lua")):toBe(
+                "./path/to/subpath/file.lua"
+            )
+        end)
+
+        test("path/to, ../file.lua", function ()
+            expect(path.join("path/to", "../file.lua")):toBe("./path/file.lua")
+        end)
+
+        test("path/to/../, file.lua", function ()
+            expect(path.join("path/to/../", "file.lua")):toBe("./path/file.lua")
+        end)
+
+        test("path/to/./, file.lua", function ()
+            expect(path.join("path/to/./", "file.lua")):toBe(
+                "./path/to/file.lua"
+            )
+        end)
+
+        test("path/to, /path/to/file.lua", function ()
+            expect(path.join("path/to", "/path/to/file.lua")):toBe(
+                "./path/to/path/to/file.lua"
             )
         end)
     end)
