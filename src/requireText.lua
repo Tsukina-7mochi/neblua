@@ -9,7 +9,7 @@ local function requireText (moduleName)
         return package.loaded[moduleName]
     end
 
-    local resolved = assert(resolver.resolvePath(moduleName, ".", {}))
+    local resolved = assert(resolver.resolvePath(moduleName, ".", {}, {}))
     local content = assert(file.getContent(resolved.path))
 
     package.loaded[moduleName] = content

@@ -14,17 +14,24 @@ local function resolveBasedOnType (
     specifier,
     pathTemplates,
     rootDir,
-    ignorePatterns
+    ignorePatterns,
+    externalPatterns
 )
     if type == "lua" then
         return resolver.resolveModule(
             specifier,
             pathTemplates,
             rootDir,
-            ignorePatterns
+            ignorePatterns,
+            externalPatterns
         )
     elseif type == "text" then
-        return resolver.resolvePath(specifier, rootDir, ignorePatterns)
+        return resolver.resolvePath(
+            specifier,
+            rootDir,
+            ignorePatterns,
+            externalPatterns
+        )
     end
 
     return nil, "internal error: unknown module type: " .. tostring(type)
@@ -52,12 +59,15 @@ local function bundle (options)
         options.entry,
         package.path,
         options.rootDir,
-        options.exclude
+        options.exclude,
+        options.external
     )
 
     if err then
         error("Failed to resolve entry module: " .. err)
-    elseif resolvedEntry ~= nil then
+    end
+
+    if resolvedEntry ~= nil then
         table.insert(modulesToLoad, {
             type = "lua",
             path = resolvedEntry.path,
@@ -67,19 +77,25 @@ local function bundle (options)
 
     -- Add included modules to queue
     for _, spec in pairs(options.include) do
-        local resolved, err =
-            resolver.resolvePath(spec.path, options.rootDir, options.exclude)
+        local resolved, err = resolver.resolvePath(
+            spec.path,
+            options.rootDir,
+            options.exclude,
+            options.external
+        )
 
-        if err or resolved == nil then
+        if err then
             -- stylua: ignore
             error("Failed to resolve included module '" .. spec.path .. "': " .. err)
         end
 
-        table.insert(modulesToLoad, {
-            type = spec.type,
-            path = resolved.path,
-            filepath = resolved.filepath,
-        })
+        if resolved ~= nil then
+            table.insert(modulesToLoad, {
+                type = spec.type,
+                path = resolved.path,
+                filepath = resolved.filepath,
+            })
+        end
     end
 
     while #modulesToLoad > 0 do
@@ -114,12 +130,15 @@ local function bundle (options)
                 import.name,
                 package.path,
                 options.rootDir,
-                options.exclude
+                options.exclude,
+                options.external
             )
             if err then
                 -- stylua: ignore
                 error("In " .. spec.path .. ", Failed to resolve module '" .. import.name .. "': " .. err)
-            elseif resolved ~= nil then
+            end
+
+            if resolved ~= nil then
                 table.insert(modulesToLoad, {
                     type = import.type,
                     path = resolved.path,
