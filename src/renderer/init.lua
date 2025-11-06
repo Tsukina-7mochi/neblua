@@ -2,12 +2,14 @@ local luaRenderer = require("src.renderer.luaModule")
 local requireText = require("src.requireText")
 local textRenderer = require("src.renderer.textModule")
 
-local template = requireText("src/renderer/templates/template.lua")
+local initTemplate = requireText("src/renderer/templates/initialization.lua")
+local bootstrapTemplate = requireText("src/renderer/templates/bootstrap.lua")
 local templatePatterns = {
+    registry = "__NEBLUA_REGISTRY__",
     entry = "__NEBLUA_ENTRY__",
     fallbackStderr = "__NEBLUA_FALLBACK_STDERR__",
-    modulesDefinition = "--%[%[__NEBLUA_SLOT__%]%]",
 }
+local registryName = "package.nebluaModule"
 
 ---@class RendererOptions
 ---@field entry string
@@ -24,7 +26,7 @@ end
 ---@return string
 local function renderModule (module)
     if module.type == "lua" then
-        return luaRenderer.render(module.path, module.content)
+        return luaRenderer.render(registryName, module.path, module.content)
     elseif module.type == "text" then
         return textRenderer.render(module.path, module.content)
     end
@@ -41,15 +43,21 @@ local function render (modules, options)
         table.insert(renderedModules, renderModule(module))
     end
 
-    local result = template
+    local preload = initTemplate
+        :gsub(templatePatterns.registry, rawGsubRepl(registryName))
         :gsub(templatePatterns.entry, '"' .. rawGsubRepl(options.entry) .. '"')
         :gsub(templatePatterns.fallbackStderr, tostring(options.fallbackStderr))
-        :gsub(
-            templatePatterns.modulesDefinition,
-            rawGsubRepl(table.concat(renderedModules, "\n"))
-        )
 
-    return result
+    local bootstrap = bootstrapTemplate
+        :gsub(templatePatterns.registry, rawGsubRepl(registryName))
+        :gsub(templatePatterns.entry, '"' .. rawGsubRepl(options.entry) .. '"')
+        :gsub(templatePatterns.fallbackStderr, tostring(options.fallbackStderr))
+
+    return preload
+        .. "\n"
+        .. table.concat(renderedModules, "\n")
+        .. "\n"
+        .. bootstrap
 end
 
 return {
