@@ -1,14 +1,12 @@
-local function render (filename, functionBody)
+local function render (registry, filename, functionBody)
     return ([[
-package.bundleLoader["%s"] = {
+%s["%s"] = {
     line = debug.getinfo(1).currentline,
     loader = function(...)
-
 %s
-
     end
 }
-]]):format(filename, functionBody)
+]]):format(registry, filename, functionBody)
 end
 
 return {
