@@ -1,6 +1,6 @@
 # NebLua
 
-NebLua is a tiny zero-dependency bundler for Lua. Lua 5.3 and 5.4 supported.
+NebLua is a tiny zero-dependency bundler for Lua. Lua 5.3 and 5.4 are supported.
 
 ## Features
 
