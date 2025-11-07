@@ -13,6 +13,15 @@ Download single source file from [Releases](https://github.com/Tsukina-7mochi/ne
 
 ## Usage
 
+### CLI
+
+```
+$ lua neblua-cli [options] [files]
+```
+
+See `lua neblua-cli --help` for details.
+
+
 ### Lua
 
 This is a part of configuration of NebLua's self-build. See `/example` and `/test/bundle/bundle.test.lua`
@@ -37,23 +46,6 @@ bundle {
     verbose = true,  --Optional
 }
 ```
-
-### CLI
-
-```
-$ lua neblua-cli [options] [files]
-```
-
-Add positional arguments to explicitly add files
-
-|       options       |    value    |                function                |
-| ------------------- | ----------- | -------------------------------------- |
-| `-e`, `--entry`     | module name | set entry point                        |
-| `-o`, `--output`    | file name   | set output file name                   |
-| `--verbose`         | none        | enable verbose mode                    |
-| `-v`, `--version`   | none        | print version                          |
-| `--exclude`         | none        | excluded file patterns from bundle     |
-| `--fallback-stderr` | none        | enable use of stdout instead of stderr |
 
 ## API
 
