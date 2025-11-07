@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.7.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.6.0...v0.7.0) (2025-11-07)
+
+
+### Features
+
+* support external in CLI ([cebec38](https://github.com/Tsukina-7mochi/neblua/commit/cebec3828c762070d090870053cf00e61df070d7))
+* update templates ([8c60ce7](https://github.com/Tsukina-7mochi/neblua/commit/8c60ce7b72f043e28956259c9d620a655fba4ea8))
+* update templates ([170e90a](https://github.com/Tsukina-7mochi/neblua/commit/170e90a7d0c2f647c68859a4c12d43597696f9f0))
+
 ## [0.6.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.5.3...v0.6.0) (2025-11-05)
 
 
