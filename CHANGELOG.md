@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.8.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.7.0...v0.8.0) (2025-11-07)
+
+
+### Features
+
+* implement code injection ([8179c80](https://github.com/Tsukina-7mochi/neblua/commit/8179c80924e76c388b4e99450726d689629de611))
+
+
+### Bug Fixes
+
+* surround bootstrap code in function to avoid reference neblua context from module ([bfec5b8](https://github.com/Tsukina-7mochi/neblua/commit/bfec5b8ee83ee88e8526e46a62557d08ede54a65))
+
 ## [0.7.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.6.0...v0.7.0) (2025-11-07)
 
 
