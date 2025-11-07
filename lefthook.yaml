@@ -1,12 +1,9 @@
 pre-push:
   parallel: true
   commands:
+    check-format:
+      run: stylua --check ./src
     run-tests:
       run: make test
     test-self-build:
       run: make test-self-build
-
-commit-msg:
-  commands:
-    commitlint:
-      run: 'npx --no -- commitlint --edit {1}'

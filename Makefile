@@ -9,8 +9,8 @@ $(DIST):
 	mkdir -p $(DIST)
 
 build: $(DIST)
-	$(LUA) ./src/cli.lua -e src.neblua -o ./dist/neblua.lua ./src/neblua.lua
-	$(LUA) ./src/cli.lua -e src.cli -o ./dist/neblua-cli.lua ./src/cli.lua
+	$(LUA) ./src/cli.lua -e src.neblua -o ./dist/neblua.lua
+	$(LUA) ./src/cli.lua -e src.cli -o ./dist/neblua-cli.lua
 
 $(TEST_LIB):
 	mkdir -p $(LIB)

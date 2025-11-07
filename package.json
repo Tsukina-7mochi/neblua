@@ -1,7 +1,0 @@
-{
-  "devDependencies": {
-    "@commitlint/cli": "^19",
-    "@commitlint/config-conventional": "^19",
-    "lefthook": "^1"
-  }
-}
