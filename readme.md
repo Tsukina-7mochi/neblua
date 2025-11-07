@@ -2,16 +2,46 @@
 
 NebLua is a tiny zero-dependency bundler for Lua. Lua 5.3 and 5.4 are supported.
 
-## Features
-
-- Bundle `require`, `loadfile` and `dofile` functions
-- Text import with `requireText`
-
 ## Installation
 
 Download single source file from [Releases](https://github.com/Tsukina-7mochi/neblua/releases)
 
+```sh
+# download neblua
+$ curl https://github.com/Tsukina-7mochi/neblua/releases/latest/download/neblua.lua
+
+# or neblua CLI
+$ curl https://github.com/Tsukina-7mochi/neblua/releases/latest/download/neblua-cli.lua
+```
+
 ## Usage
+
+### In source file
+
+`require`-ed modules are resolevd in `package.path` and added to bundle automatically.
+
+```lua
+-- module1.lua
+return {
+  greeting = function()
+    print("module 1")
+  end
+}
+
+-- main.lua
+local module1 = require("module1")
+module1.greeting()
+```
+
+When using `dofile` or `loadfile`, you have to add it to bundle manually (see below).
+
+Use `requireText` to add a resource to the bundle as a text.
+
+```lua
+local requireText = require("neblua").requireText
+local resource = requireText("module1")
+print(resource)
+```
 
 ### CLI
 
@@ -20,7 +50,6 @@ $ lua neblua-cli [options] [files]
 ```
 
 See `lua neblua-cli --help` for details.
-
 
 ### Lua
 
@@ -64,16 +93,16 @@ Bundles input files into one file.
 
 #### BuildOptions
 
-|       key        |       type        |             value                                             |
-| ---------------- | ----------------- |  ------------------------------------------------------------ |
-| `rootDir`        | `string \| nil`   | root directory of source files                                |
-| `entry`          | `string`          | entry module name                                             |
-| `include`        | `File[] |\ nil`   | source files (where `File` is `string \| { path: string, type: string }`) |
-| `output`         | `string`          | output file name                                              |
-| `verbose`        | `boolean \| nil`  | enable verbose output                                         |
-| `exclude`        | `string[] \| nil` | excludes files from bundle with patterns                      |
-| `external`       | `string[] \| nil` | mark a module or file as external to prevent resolution error |
-| `fallbackStderr` | `string[] \| nil` | enable use of stdout instead of stderr                        |
+|       key        |       type        |             value                                                                                                                         |
+| ---------------- | ----------------- |  ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `rootDir`        | `string \| nil`   | Root directory used to path resolution. Applied after module resolution with `package.path`. Defaults to `./`.                            |
+| `entry`          | `string`          | Entry module name. Required.                                                                                                              |
+| `include`        | `File[] \| nil`   | Files added to bundle. `File` is `string \| { path: string, type: string }`. `path` must be file path, not module name. Defaults to `{}`. |
+| `output`         | `string`          | Output file name. Required.                                                                                                               |
+| `exclude`        | `string[] \| nil` | Excluded files used in path resolution. Specified in patterns. Defaults to `{}`.                                                          |
+| `external`       | `string[] \| nil` | External modules and files. These modules/files are referenced in runtime. Defaults to `{}`.                                              |
+| `fallbackStderr` | `string[] \| nil` | Use of stdout instead of stderr to print error in bundled file. Defaults to `false`.                                                      |
+| `verbose`        | `boolean \| nil`  | Enable verbose output for debug. Defaults to `false.                                                                                      |
 
 ### neblua.requireText
 
@@ -82,16 +111,6 @@ neblua.requireText(path: string): string
 ```
 
 Requires module as text file. Returns text content of the given file.
-
-#### Example
-
-```lua
-local requireText = require("neblua").requireText
-
--- Text content is bundled
-local version = requireText("./version.txt")
-print(version)
-```
 
 ### neblua.appInfo
 
@@ -103,14 +122,3 @@ neblua.appInfo
 | --------- | -------- | --------------------- |
 | `name`    | `string` | the value `"neblua"`  |
 | `version` | `string` | the version of neblua |
-
-## Plans
-
-- [x] support `require`
-- [x] support `loadfile`
-- [x] support `dofile`
-- [x] error output override
-- [x] string require
-- [x] (partially) automatically add required files
-- [ ] minify
-- [ ] tree shaking
