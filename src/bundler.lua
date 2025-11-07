@@ -153,6 +153,11 @@ local function bundle (options)
     local result = renderer.render(loadedModules, {
         entry = options.entry,
         fallbackStderr = options.fallbackStderr,
+        header = options.header,
+        preInitCode = options.preInitCode,
+        postInitCode = options.postInitCode,
+        preRunCode = options.preRunCode,
+        postRunCode = options.postRunCode,
     })
 
     local outputFile = io.open(options.output, "w")

@@ -125,6 +125,8 @@ local errorHandler = function (err)
     return message
 end
 
+--[[ slot: pre-run ]]
+
 local loader = bundlerSearcher(__NEBLUA_ENTRY__)
 if loader == nil then
     error("Cannot find entry point: " .. __NEBLUA_ENTRY__)
@@ -132,6 +134,9 @@ end
 
 local result = table.pack(xpcall(loader, errorHandler, __NEBLUA_ENTRY__, ...))
 local success = result[1]
+
+--[[ slot: post-run ]]
+
 -- print error to stdout and re-throw
 if not success then
     if __NEBLUA_FALLBACK_STDERR__ then
