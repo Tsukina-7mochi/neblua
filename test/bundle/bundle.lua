@@ -230,4 +230,17 @@ describe(debug.getinfo(1).short_src, function ()
         expect(stdout):toBe("main\nmodule1\n")
         expect(stderr):toBe("")
     end)
+
+    test("requireText", function ()
+        local options = {
+            rootDir = "./test/bundle/requireText/",
+            entry = "main",
+            output = "./test/bundle/requireText/main.bundle.lua",
+        }
+        bundle(options)
+
+        local stdout, stderr = util.execute(options.output)
+        expect(stdout):toBe("main\nHello, World!\n\n")
+        expect(stderr):toBe("")
+    end)
 end)
