@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.8.1](https://github.com/Tsukina-7mochi/neblua/compare/v0.8.0...v0.8.1) (2025-11-10)
+
+
+### Bug Fixes
+
+* fix requireText does not normalize path ([a2edad6](https://github.com/Tsukina-7mochi/neblua/commit/a2edad65d60342c9c033f7ace080e420127e65f7))
+* fix requireText is not embedded in bundled file ([5ee3f30](https://github.com/Tsukina-7mochi/neblua/commit/5ee3f301e32cf3da3168be416aa3fcf4d84d7047))
+
 ## [0.8.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.7.0...v0.8.0) (2025-11-07)
 
 
