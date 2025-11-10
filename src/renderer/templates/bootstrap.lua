@@ -72,6 +72,7 @@ return (function (...)
 
         -- Replace dofile
         local originalDoFile = dofile
+        ---@diagnostic disable-next-line: duplicate-set-field
         _ENV.dofile = function (path)
             local loader = package.nebluaModule[path]
             if loader ~= nil and loader.loader ~= nil then
@@ -83,6 +84,7 @@ return (function (...)
 
         -- Replace loadfile
         local originalLoadFile = loadfile
+        ---@diagnostic disable-next-line: duplicate-set-field
         _ENV.loadfile = function (path, ...)
             local loader = package.nebluaModule[path]
             if loader ~= nil and loader.loader ~= nil then
@@ -90,6 +92,10 @@ return (function (...)
             else
                 return originalLoadFile(path, ...)
             end
+        end
+
+        _ENV.requireText = function (path)
+            return package.loaded[path]
         end
     end
 
