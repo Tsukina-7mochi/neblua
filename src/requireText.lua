@@ -1,10 +1,13 @@
 local file = require("src.lib.file")
+local path = require("src.lib.path")
 local resolver = require("src.resolver")
 
 ---require file as a string
 ---@param moduleName string
 ---@return string
 local function requireText (moduleName)
+    moduleName = path.normalize(moduleName)
+
     if package.loaded[moduleName] ~= nil then
         return package.loaded[moduleName]
     end
