@@ -1,6 +1,10 @@
-# NebLua
+<div align="center">
+<h1>NebLua</h1>
 
-NebLua is a tiny zero-dependency bundler for Lua. Lua 5.3 and 5.4 are supported.
+<div>A tiny zero-dependency bundler for Lua</div>
+<div>Supports Lua 5.3 and 5.4</div>
+
+</div>
 
 ## Installation
 
@@ -8,17 +12,15 @@ Download single source file from [Releases](https://github.com/Tsukina-7mochi/ne
 
 ```sh
 # download neblua
-$ curl https://github.com/Tsukina-7mochi/neblua/releases/latest/download/neblua.lua
+$ curl -fsSL https://github.com/Tsukina-7mochi/neblua/releases/latest/download/neblua.lua > neblua.lua
 
 # or neblua CLI
-$ curl https://github.com/Tsukina-7mochi/neblua/releases/latest/download/neblua-cli.lua
+$ curl -fsSL https://github.com/Tsukina-7mochi/neblua/releases/latest/download/neblua-cli.lua > neblua-cli.lua
 ```
 
-## Usage
+## Quick Start
 
-### In source file
-
-`require`-ed modules are resolevd in `package.path` and added to bundle automatically.
+Basically, you don't have to do special thing in your source file. NebLua automatically includes `require`-ed modules to bundle. When using `dofile` or `loadfile`, you have to add it to bundle manually (see the Usage section).
 
 ```lua
 -- module1.lua
@@ -33,20 +35,28 @@ local module1 = require("module1")
 module1.greeting()
 ```
 
-When using `dofile` or `loadfile`, you have to add it to bundle manually (see below).
-
-Use `requireText` to add a resource to the bundle as a text.
+Use `requireText` to add a resource to bundle as a string literal.
 
 ```lua
 local requireText = require("neblua").requireText
+
+-- line below is replaced to string literal assignment in generated file.
 local resource = requireText("module1")
 print(resource)
 ```
 
+Then, run CLI to bundle source files into a file.
+
+```
+$ lua neblua-cli -e main -o ./dist/script.lua
+```
+
+## Usage
+
 ### CLI
 
 ```
-$ lua neblua-cli [options] [files]
+$ lua neblua-cli [options] [additional files]
 ```
 
 See `lua neblua-cli --help` for details.
@@ -102,8 +112,12 @@ Bundles input files into one file.
 | `exclude`        | `string[] \| nil` | Excluded files used in path resolution. Specified in patterns. Defaults to `{}`.                                                          |
 | `external`       | `string[] \| nil` | External modules and files. These modules/files are referenced in runtime. Defaults to `{}`.                                              |
 | `fallbackStderr` | `string[] \| nil` | Use of stdout instead of stderr to print error in bundled file. Defaults to `false`.                                                      |
-| `verbose`        | `boolean \| nil`  | Enable verbose output for debug. Defaults to `false.                                                                                      |
-
+| `verbose`        | `boolean \| nil`  | Enable verbose output for debug. Defaults to `false`.                                                                                     |
+| `header`         | `string \| nil`   | Additional text included in header of bundled file. Defaults to `""`.                                                                     |
+| `preInitCode`    | `string \| nil`   | Text inserted before initialization of bundled file. Defaults to `""`.                                                                    |
+| `postInitCode`   | `string \| nil`   | Text inserted after initialization of bundled file. Defaults to `""`.                                                                     |
+| `preRunCode`     | `string \| nil`   | Text inserted before execution of entry point in bundled file. Defaults to `""`.                                                          |
+| `postRunCode`    | `string \| nil`   | Text inserted after execution of entry point in bundled file. Executed whether entry module returns error. Defaults to `""`.              |
 ### neblua.requireText
 
 ```
