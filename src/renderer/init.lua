@@ -18,10 +18,21 @@ local function rawGsubRepl (repl)
     return result
 end
 
+---@param repl string
+---@return string
+local function stringLiteralGsubRepl (repl)
+    local result = repl:gsub("%%", "%%%%"):gsub('"', '\\"')
+    return '"' .. result .. '"'
+end
+
 local initTemplate = requireText("src/renderer/templates/initialization.lua")
 local bootstrapTemplate = requireText("src/renderer/templates/bootstrap.lua")
 local templatePatterns = {
     registry = "__NEBLUA_REGISTRY__",
+    packagePath = "__NEBLUA_PACKAGE_PATH__",
+    templateSeparator = "__NEBLUA_TEMPLATE_SEPARATOR__",
+    pathSeparator = "__NEBLUA_PATH_SEPARATOR__",
+    substitutionPoint = "__NEBLUA_SUBSTITUTION_POINT__",
     entry = "__NEBLUA_ENTRY__",
     fallbackStderr = "__NEBLUA_FALLBACK_STDERR__",
     header = "%-%-%[%[ slot: header %]%]",
@@ -53,9 +64,26 @@ local function render (modules, options)
         table.insert(renderedModules, renderModule(module))
     end
 
+    local pathSeparator = package.config:sub(1, 1)
+    local templateSeparator = package.config:sub(3, 3)
+    local substitutionPoint = package.config:sub(5, 5)
+
     local preload = initTemplate
         :gsub(templatePatterns.registry, rawGsubRepl(registryName))
-        :gsub(templatePatterns.entry, '"' .. rawGsubRepl(options.entry) .. '"')
+        :gsub(templatePatterns.packagePath, stringLiteralGsubRepl(package.path))
+        :gsub(
+            templatePatterns.templateSeparator,
+            stringLiteralGsubRepl(templateSeparator)
+        )
+        :gsub(
+            templatePatterns.pathSeparator,
+            stringLiteralGsubRepl(pathSeparator)
+        )
+        :gsub(
+            templatePatterns.substitutionPoint,
+            stringLiteralGsubRepl(substitutionPoint)
+        )
+        :gsub(templatePatterns.entry, stringLiteralGsubRepl(options.entry))
         :gsub(templatePatterns.fallbackStderr, tostring(options.fallbackStderr))
         :gsub(templatePatterns.header, tostring(options.header))
         :gsub(templatePatterns.preInit, tostring(options.preInitCode))
@@ -63,7 +91,20 @@ local function render (modules, options)
 
     local bootstrap = bootstrapTemplate
         :gsub(templatePatterns.registry, rawGsubRepl(registryName))
-        :gsub(templatePatterns.entry, '"' .. rawGsubRepl(options.entry) .. '"')
+        :gsub(templatePatterns.packagePath, stringLiteralGsubRepl(package.path))
+        :gsub(
+            templatePatterns.templateSeparator,
+            stringLiteralGsubRepl(templateSeparator)
+        )
+        :gsub(
+            templatePatterns.pathSeparator,
+            stringLiteralGsubRepl(pathSeparator)
+        )
+        :gsub(
+            templatePatterns.substitutionPoint,
+            stringLiteralGsubRepl(substitutionPoint)
+        )
+        :gsub(templatePatterns.entry, stringLiteralGsubRepl(options.entry))
         :gsub(templatePatterns.fallbackStderr, tostring(options.fallbackStderr))
         :gsub(templatePatterns.preRun, tostring(options.preRunCode))
         :gsub(templatePatterns.postRun, tostring(options.postRunCode))
