@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.8.1...v0.9.0) (2026-03-09)
+
+
+### Features
+
+* embed compile-time package.path to bundler searcher ([f5a6c93](https://github.com/Tsukina-7mochi/neblua/commit/f5a6c931ac8007b123b38be91aefd77b0b4d6033))
+* embed compile-time package.path to bundler searcher ([a994360](https://github.com/Tsukina-7mochi/neblua/commit/a994360319266af66756f7c018c79f55d192acaa))
+
 ## [0.8.1](https://github.com/Tsukina-7mochi/neblua/compare/v0.8.0...v0.8.1) (2025-11-10)
 
 
