@@ -15,7 +15,7 @@ build: $(DIST)
 
 $(TEST_LIB):
 	mkdir -p $(LIB)
-	curl -sSL https://github.com/Tsukina-7mochi/lua-testing-library/releases/latest/download/test.lua > $(TEST_LIB)
+	curl -sSL https://github.com/Tsukina-7mochi/syzygy/releases/latest/download/syzygy.lua > $(TEST_LIB)
 
 .PHONY: test-self-build
 test-self-build: build
