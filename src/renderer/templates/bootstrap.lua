@@ -52,10 +52,12 @@ return (function (...)
     local function bundlerSearcher (moduleName)
         moduleName = moduleName:gsub("%.", internalPathSeparator)
 
-        for template in split(package.path, templateSeparator) do
+        for template in
+            split(__NEBLUA_PACKAGE_PATH__, __NEBLUA_TEMPLATE_SEPARATOR__)
+        do
             local path = template
-                :gsub(pathSeparator, internalPathSeparator)
-                :gsub(substitutionPoint, moduleName)
+                :gsub(__NEBLUA_PATH_SEPARATOR__, internalPathSeparator)
+                :gsub(__NEBLUA_SUBSTITUTION_POINT__, moduleName)
 
             local module = package.nebluaModule[normalizePath(path)]
             if module ~= nil and module.loader ~= nil then
