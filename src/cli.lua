@@ -23,6 +23,7 @@ Options:
     --root-dir <dir>        Root directory
     --verbose               Enable verbose output
     --fallback-stderr       Use stdout as fallback for stderr
+    --path-override <path>  Override package.path used for module resolution
     --help                  Print this help message
 ]])
 end
@@ -73,6 +74,10 @@ for _, val in ipairs(arg) do
         command = nil
 
         table.insert(options.external, val)
+    elseif command == "--path-override" then
+        command = nil
+
+        options.pathOverride = val
     else
         error("Unknown command " .. command)
     end

@@ -127,6 +127,21 @@ describe(debug.getinfo(1).short_src, function ()
         end
     )
 
+    test("pathOverride", function ()
+        local options = {
+            rootDir = "./test/bundle/pathOverride/",
+            entry = "main",
+            output = "./test/bundle/pathOverride/main.bundle.lua",
+            pathOverride = "./alt_?.lua",
+        }
+        bundle(options)
+
+        local stdout, stderr = util.execute(options.output)
+
+        expect(stdout):toBe("alt_main\nalt_module1\n")
+        expect(stderr):toBe("")
+    end)
+
     test("error line", function ()
         local options = {
             rootDir = "./test/bundle/error/",

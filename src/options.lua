@@ -14,6 +14,7 @@ local path = require("src.lib.path")
 ---@field postInitCode? string
 ---@field preRunCode? string
 ---@field postRunCode? string
+---@field pathOverride? string
 
 ---@class BundleOptions
 ---@field rootDir string
@@ -29,6 +30,7 @@ local path = require("src.lib.path")
 ---@field postInitCode string
 ---@field preRunCode string
 ---@field postRunCode string
+---@field pathOverride string
 
 ---@param options PartialBundleOptions
 ---@return BundleOptions?
@@ -51,6 +53,7 @@ local function normalize (options)
     local postInitCode = options.postInitCode
     local preRunCode = options.preRunCode
     local postRunCode = options.postRunCode
+    local pathOverride = options.pathOverride
 
     if rootDir == nil then
         rootDir = "./"
@@ -65,7 +68,6 @@ local function normalize (options)
     if type(entry) ~= "string" then
         return nil, "Expected options.entry to be a string"
     end
-    entry = path.normalize(entry)
 
     if include == nil then
         include = {}
@@ -168,6 +170,12 @@ local function normalize (options)
         return nil, "Expected options.postRunCode to be a string or nil"
     end
 
+    if pathOverride == nil then
+        pathOverride = package.path
+    elseif type(pathOverride) ~= "string" then
+        return nil, "Expected options.pathOverride to be a string or nil"
+    end
+
     return {
         rootDir = rootDir,
         entry = entry,
@@ -182,6 +190,7 @@ local function normalize (options)
         postInitCode = postInitCode,
         preRunCode = preRunCode,
         postRunCode = postRunCode,
+        pathOverride = pathOverride,
     }
 end
 
