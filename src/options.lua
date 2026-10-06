@@ -65,7 +65,6 @@ local function normalize (options)
     if type(entry) ~= "string" then
         return nil, "Expected options.entry to be a string"
     end
-    entry = path.normalize(entry)
 
     if include == nil then
         include = {}
