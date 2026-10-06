@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.9.0...v0.10.0) (2026-10-06)
+
+
+### Features
+
+* add pathOverride option to configure package.path ([147918d](https://github.com/Tsukina-7mochi/neblua/commit/147918df0b7e61278e2d775d7826185f64389a58))
+* add pathOverride option to configure package.path ([bdbc8ae](https://github.com/Tsukina-7mochi/neblua/commit/bdbc8ae805c057942210bc905419d90fa58907d4))
+
+
+### Bug Fixes
+
+* escape string literals in bundled file with %q ([ffbde32](https://github.com/Tsukina-7mochi/neblua/commit/ffbde32307f7fab988f8a0b4b7687a615da3d61c))
+* escape string literals in bundled file with %q ([2780b16](https://github.com/Tsukina-7mochi/neblua/commit/2780b160f17a266bf34d0ecc4c4648ce3f1a0e1a))
+* stop normalizing entry as a file path ([fe97812](https://github.com/Tsukina-7mochi/neblua/commit/fe97812e13967b2a9abe3bc0699ad089fda7dfee))
+
 ## [0.9.0](https://github.com/Tsukina-7mochi/neblua/compare/v0.8.1...v0.9.0) (2026-03-09)
 
 
