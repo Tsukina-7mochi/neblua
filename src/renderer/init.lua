@@ -10,6 +10,7 @@ local textRenderer = require("src.renderer.textModule")
 ---@field postInitCode? string
 ---@field preRunCode? string
 ---@field postRunCode? string
+---@field packagePath string
 
 ---@param repl string
 ---@return string
@@ -70,7 +71,10 @@ local function render (modules, options)
 
     local preload = initTemplate
         :gsub(templatePatterns.registry, rawGsubRepl(registryName))
-        :gsub(templatePatterns.packagePath, stringLiteralGsubRepl(package.path))
+        :gsub(
+            templatePatterns.packagePath,
+            stringLiteralGsubRepl(options.packagePath)
+        )
         :gsub(
             templatePatterns.templateSeparator,
             stringLiteralGsubRepl(templateSeparator)
@@ -91,7 +95,10 @@ local function render (modules, options)
 
     local bootstrap = bootstrapTemplate
         :gsub(templatePatterns.registry, rawGsubRepl(registryName))
-        :gsub(templatePatterns.packagePath, stringLiteralGsubRepl(package.path))
+        :gsub(
+            templatePatterns.packagePath,
+            stringLiteralGsubRepl(options.packagePath)
+        )
         :gsub(
             templatePatterns.templateSeparator,
             stringLiteralGsubRepl(templateSeparator)

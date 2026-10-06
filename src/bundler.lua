@@ -57,7 +57,7 @@ local function bundle (options)
     -- load entry module
     local resolvedEntry, err = resolver.resolveModule(
         options.entry,
-        package.path,
+        options.pathOverride,
         options.rootDir,
         options.exclude,
         options.external
@@ -128,7 +128,7 @@ local function bundle (options)
             local resolved, err = resolveBasedOnType(
                 import.type,
                 import.name,
-                package.path,
+                options.pathOverride,
                 options.rootDir,
                 options.exclude,
                 options.external
@@ -158,6 +158,7 @@ local function bundle (options)
         postInitCode = options.postInitCode,
         preRunCode = options.preRunCode,
         postRunCode = options.postRunCode,
+        packagePath = options.pathOverride,
     })
 
     local outputFile = io.open(options.output, "w")

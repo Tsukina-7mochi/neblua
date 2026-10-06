@@ -103,8 +103,8 @@ Bundles input files into one file.
 
 #### BuildOptions
 
-|       key        |       type        |             value                                                                                                                         |
-| ---------------- | ----------------- |  ---------------------------------------------------------------------------------------------------------------------------------------- |
+| key              | type              | value                                                                                                                                     |
+| ---------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `rootDir`        | `string \| nil`   | Root directory used to path resolution. Applied after module resolution with `package.path`. Defaults to `./`.                            |
 | `entry`          | `string`          | Entry module name. Required.                                                                                                              |
 | `include`        | `File[] \| nil`   | Files added to bundle. `File` is `string \| { path: string, type: string }`. `path` must be file path, not module name. Defaults to `{}`. |
@@ -112,12 +112,14 @@ Bundles input files into one file.
 | `exclude`        | `string[] \| nil` | Excluded files used in path resolution. Specified in patterns. Defaults to `{}`.                                                          |
 | `external`       | `string[] \| nil` | External modules and files. These modules/files are referenced in runtime. Defaults to `{}`.                                              |
 | `fallbackStderr` | `string[] \| nil` | Use of stdout instead of stderr to print error in bundled file. Defaults to `false`.                                                      |
+| `pathOverride`   | `string \| nil`   | `package.path` used for embedded module resolution at build time and embedded in bundled file. Defaults to `package.path`.                |
 | `verbose`        | `boolean \| nil`  | Enable verbose output for debug. Defaults to `false`.                                                                                     |
 | `header`         | `string \| nil`   | Additional text included in header of bundled file. Defaults to `""`.                                                                     |
 | `preInitCode`    | `string \| nil`   | Text inserted before initialization of bundled file. Defaults to `""`.                                                                    |
 | `postInitCode`   | `string \| nil`   | Text inserted after initialization of bundled file. Defaults to `""`.                                                                     |
 | `preRunCode`     | `string \| nil`   | Text inserted before execution of entry point in bundled file. Defaults to `""`.                                                          |
 | `postRunCode`    | `string \| nil`   | Text inserted after execution of entry point in bundled file. Executed whether entry module returns error. Defaults to `""`.              |
+
 ### neblua.requireText
 
 ```
@@ -132,7 +134,7 @@ Requires module as text file. Returns text content of the given file.
 neblua.appInfo
 ```
 
-|    key    |   type   |         value         |
+| key       | type     | value                 |
 | --------- | -------- | --------------------- |
 | `name`    | `string` | the value `"neblua"`  |
 | `version` | `string` | the version of neblua |
