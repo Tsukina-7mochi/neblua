@@ -2,8 +2,8 @@ pre-push:
   parallel: true
   commands:
     check-format:
-      run: stylua --check ./src
+      run: mise run fmt:check
     run-tests:
-      run: make test
+      run: mise run test
     test-self-build:
-      run: make test-self-build
+      run: mise run test-self-build
