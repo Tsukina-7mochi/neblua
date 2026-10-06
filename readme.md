@@ -79,15 +79,16 @@ bundle {
         { path: "./src/bar.lua", type: "lua" },
         { path: "./src/some.txt", type: "text" },
     },
-    exclude = {},      --Optional
-    external = {},     --Optional
-    rootDir = nil,     --Optional
-    verbose = true,    --Optional
-    header = "",       -- Optional
-    preInitCode = "",  -- Optional
-    postInitCode = "", -- Optional
-    preRunCode = "",   -- Optional
-    postRunCode = ""   -- Optional
+    exclude = {},       --Optional
+    external = {},      --Optional
+    rootDir = nil,      --Optional
+    pathOverride = nil, --Optional
+    verbose = true,     --Optional
+    header = "",        -- Optional
+    preInitCode = "",   -- Optional
+    postInitCode = "",  -- Optional
+    preRunCode = "",    -- Optional
+    postRunCode = ""    -- Optional
 }
 ```
 
