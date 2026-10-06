@@ -1,0 +1,52 @@
+[tools]
+lefthook = "latest"
+lua = "5.4"
+stylua = "latest"
+
+[env]
+LUA_PATH = "./?.lua;./?/init.lua;./src/?.lua;./src/?/init.lua"
+
+[tasks.prepare]
+description = "Download necessary libraries"
+depends = ["prepare:test-lib"]
+
+[tasks."prepare:test-lib"]
+description = "Download syzygy"
+run = """
+mkdir -p lib
+test -f lib/test.lua || curl -fsSL https://github.com/Tsukina-7mochi/syzygy/releases/latest/download/syzygy.lua -o lib/test.lua
+"""
+
+[tasks.build]
+description = "Build scripts"
+run = """
+mkdir -p dist
+lua ./src/cli.lua -e src.neblua -o ./dist/neblua.lua
+lua ./src/cli.lua -e src.cli -o ./dist/neblua-cli.lua
+"""
+
+[tasks.test]
+description = "Run tests"
+depends = ["prepare:test-lib"]
+run = "lua ./test/test.lua"
+
+[tasks.test-self-build]
+description = "Verify build output and output by build output"
+depends = ["build"]
+run = """
+lua ./dist/neblua-cli.lua -e src.cli -o ./dist/temp.lua ./src/cli.lua
+test -z "$(diff ./dist/neblua-cli.lua ./dist/temp.lua)"
+"""
+
+[tasks.clean]
+description = "Run tests"
+depends = ["prepare:test-lib"]
+run = "rm -rf ./dist"
+
+[tasks.fmt]
+description = "Run formatter"
+run = "stylua ."
+
+[tasks."fmt:check"]
+description = "Check formatting"
+run = "stylua --check ."

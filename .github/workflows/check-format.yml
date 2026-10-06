@@ -10,8 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: JohnnyMorganz/stylua-action@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: 2.3.0
-          args: --check ./src
+      - uses: jdx/mise-action@v4
+
+      - name: Check format
+        run: mise run fmt:check

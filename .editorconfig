@@ -19,6 +19,3 @@ indent_size = 4
 [**.{json,yaml,yml,toml}]
 indent_style = space
 indent_size = 4
-
-[Makefile]
-indent_style = tab
