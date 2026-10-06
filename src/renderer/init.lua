@@ -21,8 +21,8 @@ end
 ---@param repl string
 ---@return string
 local function stringLiteralGsubRepl (repl)
-    local result = repl:gsub("%%", "%%%%"):gsub('"', '\\"')
-    return '"' .. result .. '"'
+    local result = string.format("%q", repl):gsub("%%", "%%%%")
+    return result
 end
 
 local initTemplate = requireText("src/renderer/templates/initialization.lua")
